@@ -4,6 +4,8 @@
 >
 > MVP built for the **HashKey Chain Horizon Hackathon Japan** (AI + DeFi track).
 
+**🔗 Live demo:** https://tradeproof-pay-xy0nw.azurewebsites.net (Azure App Service, DemoMode / in-memory data — no login needed; switch users & roles from the bar at the top).
+
 **Stack:** Blazor Server / .NET 10 · Entity Framework Core (Azure SQL / InMemory) · ASP.NET Core Localization (ja‑JP default / en‑US) · Azure OpenAI (gpt‑5.4) · Azure AI Document Intelligence · Solidity / Hardhat on HashKey Chain.
 
 ---

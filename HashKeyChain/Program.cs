@@ -37,8 +37,21 @@ builder.Services.AddOptions<HashKeyChain.Configuration.BlockchainOptions>()
     .ValidateOnStart();
 builder.Services.AddSingleton<Microsoft.Extensions.Options.IValidateOptions<HashKeyChain.Configuration.BlockchainOptions>,
     HashKeyChain.Configuration.BlockchainOptionsValidator>();
-builder.Services.AddSingleton<HashKeyChain.Services.Blockchain.IEscrowChainService,
-    HashKeyChain.Services.Blockchain.MockEscrowChainService>();
+// DemoMode uses the in-process mock; Testnet/Mainnet talk to real HashKey Chain
+// contracts via Nethereum (chain doc §3).
+var blockchainEnv = builder.Configuration
+    .GetValue<HashKeyChain.Configuration.BlockchainEnvironment>(
+        $"{HashKeyChain.Configuration.BlockchainOptions.SectionName}:Environment");
+if (blockchainEnv == HashKeyChain.Configuration.BlockchainEnvironment.DemoMode)
+{
+    builder.Services.AddSingleton<HashKeyChain.Services.Blockchain.IEscrowChainService,
+        HashKeyChain.Services.Blockchain.MockEscrowChainService>();
+}
+else
+{
+    builder.Services.AddSingleton<HashKeyChain.Services.Blockchain.IEscrowChainService,
+        HashKeyChain.Services.Blockchain.HashKeyEscrowChainService>();
+}
 
 // Trade lifecycle + role context.
 builder.Services.AddSingleton<HashKeyChain.Services.Trades.ITradeStateMachine,
@@ -148,14 +161,12 @@ var app = builder.Build();
 await app.Services.ApplyDatabaseBootstrapAsync(
     app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Database"));
 
-// Seed demo companies/users in DemoMode against a real database.
+// Seed demo companies/users against a real database, independent of the chain
+// environment (the demo data is required to create trades on Testnet too).
 {
     var dbOptions = app.Services.GetRequiredService<
         Microsoft.Extensions.Options.IOptions<DatabaseOptions>>().Value;
-    var chainOptions = app.Services.GetRequiredService<
-        Microsoft.Extensions.Options.IOptions<HashKeyChain.Configuration.BlockchainOptions>>().Value;
-    if (dbOptions.Provider != DatabaseProvider.None
-        && chainOptions.Environment == HashKeyChain.Configuration.BlockchainEnvironment.DemoMode)
+    if (dbOptions.Provider != DatabaseProvider.None)
     {
         try
         {

@@ -60,7 +60,7 @@ public class SettlementServiceTests
             db.SaveChanges();
         }
         // Fund the mock escrow so release/refund can operate.
-        chain.FundAsync(id, "0xB", 1000m, "MockUSDC").GetAwaiter().GetResult();
+        chain.FundAsync(id, "0xB", "0xS", 1000m, "MockUSDC").GetAwaiter().GetResult();
         return new Harness(settle, refund, factory, id);
     }
 

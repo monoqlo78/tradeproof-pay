@@ -41,7 +41,7 @@ public sealed class MockEscrowChainService : IEscrowChainService
     public Task<GasEstimate> EstimateAsync(string operation, CancellationToken ct = default) =>
         Task.FromResult(new GasEstimate(90_000, "0.0", 0m, _options.NativeCurrencySymbol));
 
-    public Task<ChainTxResult> FundAsync(int tradeId, string buyerWallet, decimal amount, string token, CancellationToken ct = default)
+    public Task<ChainTxResult> FundAsync(int tradeId, string buyerWallet, string sellerWallet, decimal amount, string token, CancellationToken ct = default)
     {
         var e = Escrows.GetOrAdd(tradeId, _ => new MockEscrow());
         lock (e)

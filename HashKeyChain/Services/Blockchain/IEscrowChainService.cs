@@ -44,8 +44,9 @@ public interface IEscrowChainService
 
     Task<GasEstimate> EstimateAsync(string operation, CancellationToken ct = default);
 
-    /// <summary>Fund the escrow for a trade (spec §7).</summary>
-    Task<ChainTxResult> FundAsync(int tradeId, string buyerWallet, decimal amount, string token, CancellationToken ct = default);
+    /// <summary>Fund the escrow for a trade (spec §7). The seller wallet is
+    /// recorded on-chain at fund time so release pays the correct recipient.</summary>
+    Task<ChainTxResult> FundAsync(int tradeId, string buyerWallet, string sellerWallet, decimal amount, string token, CancellationToken ct = default);
 
     /// <summary>Register document / verdict / approval hashes on-chain (spec §20).</summary>
     Task<ChainTxResult> RegisterHashesAsync(int tradeId, IReadOnlyDictionary<string, string> hashes, CancellationToken ct = default);

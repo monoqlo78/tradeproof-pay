@@ -26,6 +26,15 @@ public sealed class BlockchainOptionsValidator : IValidateOptions<BlockchainOpti
         if (string.IsNullOrWhiteSpace(options.ExplorerBaseUrl))
             errors.Add("Blockchain:ExplorerBaseUrl is required for Testnet/Mainnet.");
 
+        if (string.IsNullOrWhiteSpace(options.EscrowContractAddress))
+            errors.Add("Blockchain:EscrowContractAddress is required for Testnet/Mainnet.");
+
+        if (string.IsNullOrWhiteSpace(options.TokenContractAddress))
+            errors.Add("Blockchain:TokenContractAddress is required for Testnet/Mainnet.");
+
+        if (string.IsNullOrWhiteSpace(options.SignerPrivateKey))
+            errors.Add("Blockchain:SignerPrivateKey is required for Testnet/Mainnet (supply via user-secrets or App Settings).");
+
         var expectedChainId = options.Environment == BlockchainEnvironment.Testnet
             ? TestnetChainId
             : MainnetChainId;

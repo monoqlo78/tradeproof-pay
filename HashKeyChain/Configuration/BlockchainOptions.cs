@@ -37,6 +37,14 @@ public sealed class BlockchainOptions
 
     public string? TokenContractAddress { get; set; }
 
+    /// <summary>Number of decimals of the settlement token (MockUSDC = 6).</summary>
+    public int TokenDecimals { get; set; } = 6;
+
+    /// <summary>Private key of the custodial/arbiter wallet that signs on-chain
+    /// escrow operations in Testnet/Mainnet. Never committed — supplied via
+    /// user-secrets locally or an App Setting in Azure. Ignored in DemoMode.</summary>
+    public string? SignerPrivateKey { get; set; }
+
     [Range(1, 64)]
     public int RequiredConfirmations { get; set; } = 1;
 

@@ -47,7 +47,7 @@ public sealed class EscrowService(
             comment: "Escrow funding started.", correlationId: correlationId, ct: ct);
 
         var result = await _chain.FundAsync(
-            trade.Id, trade.BuyerWalletAddress, trade.PaymentAmount, trade.PaymentToken, ct);
+            trade.Id, trade.BuyerWalletAddress, trade.SellerWalletAddress, trade.PaymentAmount, trade.PaymentToken, ct);
 
         RecordTransaction(db, trade.Id, result);
         await db.SaveChangesAsync(ct);

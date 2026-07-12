@@ -3,12 +3,14 @@
 @using HashKeyChain.Data
 @using HashKeyChain.Domain
 @using HashKeyChain.Localization
+@using HashKeyChain.Services.Analysis
 @using HashKeyChain.Services.Security
 @using HashKeyChain.Services.Settings
 @using HashKeyChain.Services.Trades
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<AppDbContext> DbFactory
 @inject ITradeService TradeService
+@inject IContractExtractionService ContractExtraction
 @inject IOrgSettingsService OrgSettings
 @inject IEnumLocalizer EnumL
 @inject ICurrentUserContext CurrentUser
@@ -29,6 +31,35 @@ else if (_ownCompany is null || _sellerCompanies.Count == 0)
 }
 else
 {
+    @if (ContractExtraction.IsAvailable)
+    {
+        <div class="card border-primary-subtle mb-4" style="max-width: 40rem;">
+            <div class="card-body">
+                <h2 class="h6 card-title d-flex align-items-center gap-2">
+                    <i class="bi bi-magic"></i> @L["New_Ocr_Title"]
+                </h2>
+                <p class="card-text text-muted small mb-2">@L["New_Ocr_Hint"]</p>
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <InputFile class="form-control form-control-sm" style="max-width: 22rem;"
+                               OnChange="OnContractSelected"
+                               accept=".pdf,.png,.jpg,.jpeg,.tiff,.bmp" />
+                    <button class="btn btn-sm btn-primary" type="button"
+                            @onclick="RunOcrAsync" disabled="@(_contractFile is null || _ocrBusy)">
+                        @if (_ocrBusy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        }
+                        @L["New_Ocr_Read"]
+                    </button>
+                </div>
+                @if (_ocrMessage is not null)
+                {
+                    <div class="alert @_ocrAlertCss mt-2 mb-0 py-2 small">@_ocrMessage</div>
+                }
+            </div>
+        </div>
+    }
+
     <EditForm Model="_model" OnValidSubmit="Submit" style="max-width: 40rem;">
         <DataAnnotationsValidator />
 
@@ -126,6 +157,152 @@ else
     };
     private string? _error;
     private bool _busy;
+
+    private IBrowserFile? _contractFile;
+    private bool _ocrBusy;
+    private string? _ocrMessage;
+    private string _ocrAlertCss = "alert-info";
+
+    private void OnContractSelected(InputFileChangeEventArgs e)
+    {
+        _contractFile = e.File;
+        _ocrMessage = null;
+    }
+
+    private async Task RunOcrAsync()
+    {
+        if (_contractFile is null)
+            return;
+
+        _ocrBusy = true;
+        _ocrMessage = null;
+        try
+        {
+            await using var stream = _contractFile.OpenReadStream(maxAllowedSize: 8 * 1024 * 1024);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+
+            var result = await ContractExtraction.ExtractAsync(_contractFile.Name, ms.ToArray());
+            if (!result.Available)
+            {
+                _ocrAlertCss = "alert-warning";
+                _ocrMessage = L["New_Ocr_Unavailable"];
+            }
+            else if (!result.HasData || result.Conditions is null)
+            {
+                _ocrAlertCss = "alert-warning";
+                _ocrMessage = L["New_Ocr_NoData"];
+            }
+            else
+            {
+                var filled = ApplyExtraction(result.Conditions);
+                _ocrAlertCss = "alert-success";
+                _ocrMessage = L["New_Ocr_Applied", filled];
+            }
+        }
+        catch (Exception ex)
+        {
+            _ocrAlertCss = "alert-danger";
+            _ocrMessage = ex.Message;
+        }
+        finally
+        {
+            _ocrBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Copies extracted values into the form, filling only fields the user has not
+    /// already set. Returns the number of fields populated. The buyer stays fixed to
+    /// the operating company; the seller is matched by name against the dropdown.
+    /// </summary>
+    private int ApplyExtraction(ExtractedTradeConditions c)
+    {
+        var filled = 0;
+
+        if (_model.SellerCompanyId == 0 && MatchSeller(c.SellerName) is { } seller)
+        {
+            _model.SellerCompanyId = seller.Id;
+            OnSellerChanged();
+            filled++;
+        }
+
+        if (string.IsNullOrWhiteSpace(_model.SellerWalletAddress) && !string.IsNullOrWhiteSpace(c.SellerWalletAddress))
+        {
+            _model.SellerWalletAddress = c.SellerWalletAddress!;
+            filled++;
+        }
+
+        if (c.TransportMode is { } tm)
+        {
+            _model.TransportMode = tm;
+            filled++;
+        }
+
+        if (_model.PaymentAmount == 0 && c.TotalAmount is > 0)
+        {
+            _model.PaymentAmount = c.TotalAmount.Value;
+            filled++;
+        }
+
+        if (!string.IsNullOrWhiteSpace(c.Currency) &&
+            (string.IsNullOrWhiteSpace(_model.Currency) || _model.Currency == "USDC"))
+        {
+            _model.Currency = c.Currency!;
+            filled++;
+        }
+
+        if (_model.ExpectedQuantity is null or 0 && c.Quantity is > 0)
+        {
+            _model.ExpectedQuantity = c.Quantity;
+            filled++;
+        }
+
+        if (string.IsNullOrWhiteSpace(_model.PurchaseOrderNumber) && !string.IsNullOrWhiteSpace(c.PurchaseOrderNumber))
+        {
+            _model.PurchaseOrderNumber = c.PurchaseOrderNumber;
+            filled++;
+        }
+
+        if (string.IsNullOrWhiteSpace(_model.ExpectedProductDescription) && !string.IsNullOrWhiteSpace(c.ProductDescription))
+        {
+            _model.ExpectedProductDescription = c.ProductDescription;
+            filled++;
+        }
+
+        if (_model.LatestShipmentDate is null && c.LatestShipmentDate is { } lsd)
+        {
+            _model.LatestShipmentDate = lsd;
+            filled++;
+        }
+
+        if (_model.PaymentExpiry is null && c.PaymentExpiry is { } pe)
+        {
+            _model.PaymentExpiry = pe;
+            filled++;
+        }
+
+        return filled;
+    }
+
+    private Company? MatchSeller(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return null;
+        var needle = name.Trim();
+        return _sellerCompanies.FirstOrDefault(c =>
+                   c.Name.Contains(needle, StringComparison.OrdinalIgnoreCase) ||
+                   needle.Contains(c.Name, StringComparison.OrdinalIgnoreCase))
+               ?? _sellerCompanies.FirstOrDefault(c =>
+                   TokenOverlap(c.Name, needle));
+    }
+
+    private static bool TokenOverlap(string a, string b)
+    {
+        var at = a.Split(new[] { ' ', ',', '.', '-' }, StringSplitOptions.RemoveEmptyEntries);
+        var bt = b.Split(new[] { ' ', ',', '.', '-' }, StringSplitOptions.RemoveEmptyEntries);
+        return at.Any(x => x.Length > 2 && bt.Any(y => string.Equals(x, y, StringComparison.OrdinalIgnoreCase)));
+    }
 
     protected override async Task OnInitializedAsync()
     {

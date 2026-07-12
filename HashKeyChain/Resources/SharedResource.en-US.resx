@@ -763,4 +763,21 @@
     <value>The buyer is fixed to your own company set in Settings.</value>
   </data>
 
-</root>
+  <data name="New_Ocr_Title" xml:space="preserve">
+    <value>Auto-fill from contract (AI OCR)</value>
+  </data>
+  <data name="New_Ocr_Hint" xml:space="preserve">
+    <value>Upload a contract (PDF/image) and Azure AI Content Understanding reads the trade terms and fills the empty fields for you.</value>
+  </data>
+  <data name="New_Ocr_Read" xml:space="preserve">
+    <value>Read and fill</value>
+  </data>
+  <data name="New_Ocr_Unavailable" xml:space="preserve">
+    <value>OCR is currently unavailable (Content Understanding is not configured).</value>
+  </data>
+  <data name="New_Ocr_NoData" xml:space="preserve">
+    <value>Could not read trade terms from the contract. Please try another file.</value>
+  </data>
+  <data name="New_Ocr_Applied" xml:space="preserve">
+    <value>Filled {0} field(s) from the contract. Please review before submitting.</value>
+  </data></root>

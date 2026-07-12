@@ -67,13 +67,31 @@ builder.Services.AddOptions<HashKeyChain.Configuration.AgentOptions>()
     .Bind(builder.Configuration.GetSection(HashKeyChain.Configuration.AgentOptions.SectionName));
 builder.Services.AddOptions<HashKeyChain.Configuration.DocumentIntelligenceOptions>()
     .Bind(builder.Configuration.GetSection(HashKeyChain.Configuration.DocumentIntelligenceOptions.SectionName));
+builder.Services.AddOptions<HashKeyChain.Configuration.ContentUnderstandingOptions>()
+    .Bind(builder.Configuration.GetSection(HashKeyChain.Configuration.ContentUnderstandingOptions.SectionName));
 builder.Services.AddSingleton<HashKeyChain.Services.Agent.IChatClientProvider,
     HashKeyChain.Services.Agent.ChatClientProvider>();
 builder.Services.AddScoped<HashKeyChain.Services.Agent.ITradeAgentService,
     HashKeyChain.Services.Agent.TradeAgentService>();
+
+// Azure AI Content Understanding client + contract auto-fill (used to pre-fill the
+// trade creation form from an uploaded contract). Degrades to unavailable when not
+// configured, so the UI simply hides the feature.
+builder.Services.AddSingleton<HashKeyChain.Services.Analysis.ContentUnderstandingClient>();
+builder.Services.AddSingleton<HashKeyChain.Services.Analysis.IContractExtractionService,
+    HashKeyChain.Services.Analysis.ContentUnderstandingContractExtractionService>();
+
 builder.Services.AddSingleton<HashKeyChain.Services.Analysis.MockDocumentAnalysisService>();
 builder.Services.AddSingleton<HashKeyChain.Services.Analysis.IDocumentAnalysisService>(sp =>
 {
+    // Priority: Content Understanding (real, generative field extraction) >
+    // Document Intelligence + LLM > deterministic mock. Any of them falls back to
+    // the mock internally, so the rule engine and DemoMode are unaffected.
+    var cu = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<
+        HashKeyChain.Configuration.ContentUnderstandingOptions>>().Value;
+    if (cu.IsConfigured)
+        return ActivatorUtilities.CreateInstance<HashKeyChain.Services.Analysis.ContentUnderstandingDocumentAnalysisService>(sp);
+
     var di = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<
         HashKeyChain.Configuration.DocumentIntelligenceOptions>>().Value;
     var chat = sp.GetRequiredService<HashKeyChain.Services.Agent.IChatClientProvider>();

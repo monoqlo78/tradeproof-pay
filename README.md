@@ -4,7 +4,7 @@
 >
 > MVP built for the **HashKey Chain Horizon Hackathon Japan** (AI + DeFi track).
 
-**🔗 Live demo:** https://tradeproof-pay-xy0nw.azurewebsites.net (Azure App Service, DemoMode / in-memory data — no login needed; switch users & roles from the bar at the top).
+**🔗 Live demo:** https://tradeproof-pay-xy0nw.azurewebsites.net (Azure App Service, **real HashKey Chain Testnet** settlement / in-memory data — no login needed; switch users & roles from the bar at the top).
 
 **Stack:** Blazor Server / .NET 10 · Entity Framework Core (Azure SQL / InMemory) · ASP.NET Core Localization (ja‑JP default / en‑US) · Azure OpenAI (gpt‑5.4) · Azure AI Document Intelligence · Solidity / Hardhat on HashKey Chain.
 
@@ -81,7 +81,27 @@ The on‑chain contracts live under [`chain/`](chain) (Hardhat):
 
 Deployed to **HashKey Chain Testnet** (chainId 133, RPC `https://testnet.hsk.xyz`, native `HSK`) — see `chain/deployments/hashkeyTestnet.json`.
 
-The web app itself settles through a swappable `IEscrowChainService`; the default `DemoMode` uses an in‑process mock escrow so the acceptance criteria can be demonstrated without a wallet. Settlement/refund only finalize **after receipt confirmation**; double‑settle and double‑refund are rejected in both the service layer and the mock chain.
+The web app settles through a swappable `IEscrowChainService`:
+
+- **`DemoMode`** (default) — an in‑process mock escrow so the acceptance criteria can be demonstrated without a wallet.
+- **`Testnet`** — **real on‑chain settlement** on HashKey Chain Testnet via [Nethereum](https://nethereum.com). A single custodial/arbiter wallet (the contract owner) signs `fund` / `release` / `refund`, lazily minting + approving the test token, and the app returns **real transaction hashes + Explorer links**.
+
+Settlement/refund only finalize **after receipt confirmation**; double‑settle and double‑refund are rejected in both the service layer and on‑chain.
+
+**Enable real Testnet settlement** — set the `Blockchain` config (see `chain/deployments/hashkeyTestnet.json`) and supply the custodial signer key **outside source control** (user‑secrets locally, an App Setting in Azure):
+
+```
+Blockchain__Environment=Testnet
+Blockchain__RpcUrl=https://testnet.hsk.xyz
+Blockchain__ChainId=133
+Blockchain__ExplorerBaseUrl=https://testnet-explorer.hsk.xyz
+Blockchain__EscrowContractAddress=0x32cFF91E852ab80aD29fCE1AA63B7B40342B44c1
+Blockchain__TokenContractAddress=0xFff35Fd2A98252F3dD5ad76D4b3e425993C6153c
+Blockchain__TokenDecimals=6
+Blockchain__SignerPrivateKey=<custodial wallet key — never commit>
+```
+
+The signer key is never committed; the token has no monetary value (testnet only).
 
 ## 6. Run it locally (DemoMode)
 

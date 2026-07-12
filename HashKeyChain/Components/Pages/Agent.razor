@@ -1,0 +1,114 @@
+﻿@page "/agent"
+@rendermode InteractiveServer
+@using HashKeyChain.Localization
+@using HashKeyChain.Services.Agent
+@using HashKeyChain.Services.Security
+@using OpenAI.Chat
+@inject ITradeAgentService AgentSvc
+@inject ICurrentUserContext CurrentUser
+@inject IStringLocalizer<SharedResource> L
+@implements IDisposable
+
+<PageTitle>@L["Agent_Title"] — TradeProof Pay</PageTitle>
+
+<h1 class="h3 mb-1">@L["Agent_Title"]</h1>
+<p class="text-muted">@L["Agent_Intro"]</p>
+
+@if (!AgentSvc.IsAvailable)
+{
+    <div class="alert alert-warning">@L["Agent_NotConfigured"]</div>
+}
+else if (!CurrentUser.IsAuthenticated)
+{
+    <div class="alert alert-info">@L["Agent_NeedUser"]</div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body" style="height: 26rem; overflow-y: auto;" @ref="_scrollAnchor">
+            @if (_bubbles.Count == 0)
+            {
+                <div class="text-muted small">@L["Agent_Placeholder"]</div>
+            }
+            @foreach (var b in _bubbles)
+            {
+                <div class="d-flex mb-2 @(b.IsUser ? "justify-content-end" : "justify-content-start")">
+                    <div class="px-3 py-2 rounded @(b.IsUser ? "bg-primary text-white" : "bg-light border")"
+                         style="max-width: 80%; white-space: pre-wrap;">@b.Text</div>
+                </div>
+            }
+            @if (_busy)
+            {
+                <div class="text-muted small"><span class="spinner-border spinner-border-sm me-1"></span>@L["Agent_Thinking"]</div>
+            }
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <input class="form-control" @bind="_input" @bind:event="oninput"
+                       @onkeydown="OnKeyDown" placeholder="@L["Agent_InputPlaceholder"]" disabled="@_busy" />
+                <button class="btn btn-primary" @onclick="SendAsync" disabled="@(_busy || string.IsNullOrWhiteSpace(_input))">
+                    @L["Agent_Send"]
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private sealed record Bubble(bool IsUser, string Text);
+
+    private readonly List<Bubble> _bubbles = new();
+    private List<ChatMessage> _history = new();
+    private string _input = string.Empty;
+    private bool _busy;
+    private ElementReference _scrollAnchor;
+
+    protected override void OnInitialized()
+    {
+        CurrentUser.Changed += OnUserChanged;
+        _history = AgentSvc.NewConversation();
+    }
+
+    private void OnUserChanged()
+    {
+        // Switching acting user/role changes permissions and system context; reset.
+        _history = AgentSvc.NewConversation();
+        _bubbles.Clear();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey)
+            await SendAsync();
+    }
+
+    private async Task SendAsync()
+    {
+        var text = _input?.Trim();
+        if (string.IsNullOrEmpty(text) || _busy)
+            return;
+
+        _input = string.Empty;
+        _bubbles.Add(new Bubble(true, text));
+        _busy = true;
+        StateHasChanged();
+
+        try
+        {
+            var reply = await AgentSvc.ContinueAsync(_history, text);
+            _bubbles.Add(new Bubble(false, string.IsNullOrWhiteSpace(reply) ? L["Agent_NoReply"] : reply));
+        }
+        catch (Exception ex)
+        {
+            _bubbles.Add(new Bubble(false, $"{L["Agent_Error"]}: {ex.Message}"));
+        }
+        finally
+        {
+            _busy = false;
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose() => CurrentUser.Changed -= OnUserChanged;
+}

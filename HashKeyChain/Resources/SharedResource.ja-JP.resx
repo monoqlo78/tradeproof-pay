@@ -1,0 +1,766 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Nav_Home" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="Nav_Counter" xml:space="preserve">
+    <value>カウンター</value>
+  </data>
+  <data name="Nav_Weather" xml:space="preserve">
+    <value>天気</value>
+  </data>
+  <data name="Nav_TradeDemo" xml:space="preserve">
+    <value>取引デモ</value>
+  </data>
+  <data name="Layout_About" xml:space="preserve">
+    <value>概要</value>
+  </data>
+  <data name="Layout_Language" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="Layout_SkipToContent" xml:space="preserve">
+    <value>本文へスキップ</value>
+  </data>
+  <data name="ErrorUi_Unhandled" xml:space="preserve">
+    <value>予期しないエラーが発生しました。</value>
+  </data>
+  <data name="ErrorUi_Reload" xml:space="preserve">
+    <value>再読み込み</value>
+  </data>
+  <data name="ErrorUi_Dismiss" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Meta_Description" xml:space="preserve">
+    <value>HashKeyChain — ブロックチェーン取引ファイナンスのデモ</value>
+  </data>
+  <data name="Home_Title" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="Home_Heading" xml:space="preserve">
+    <value>こんにちは、世界！</value>
+  </data>
+  <data name="Home_Welcome" xml:space="preserve">
+    <value>新しいアプリへようこそ。</value>
+  </data>
+  <data name="Counter_Title" xml:space="preserve">
+    <value>カウンター</value>
+  </data>
+  <data name="Counter_Heading" xml:space="preserve">
+    <value>カウンター</value>
+  </data>
+  <data name="Counter_CurrentCount" xml:space="preserve">
+    <value>現在のカウント: {0}</value>
+  </data>
+  <data name="Counter_ClickMe" xml:space="preserve">
+    <value>クリック</value>
+  </data>
+  <data name="Weather_Title" xml:space="preserve">
+    <value>天気</value>
+  </data>
+  <data name="Weather_Heading" xml:space="preserve">
+    <value>天気</value>
+  </data>
+  <data name="Weather_Intro" xml:space="preserve">
+    <value>このコンポーネントはデータ表示のデモです。</value>
+  </data>
+  <data name="Weather_Loading" xml:space="preserve">
+    <value>読み込み中...</value>
+  </data>
+  <data name="Weather_Col_Date" xml:space="preserve">
+    <value>日付</value>
+  </data>
+  <data name="Weather_Col_TempC" xml:space="preserve">
+    <value>気温 (℃)</value>
+  </data>
+  <data name="Weather_Col_TempF" xml:space="preserve">
+    <value>気温 (℉)</value>
+  </data>
+  <data name="Weather_Col_Summary" xml:space="preserve">
+    <value>概況</value>
+  </data>
+  <data name="Weather_Aria_TempC" xml:space="preserve">
+    <value>摂氏の気温</value>
+  </data>
+  <data name="Weather_Aria_TempF" xml:space="preserve">
+    <value>華氏の気温</value>
+  </data>
+  <data name="Weather_Summary_Freezing" xml:space="preserve">
+    <value>極寒</value>
+  </data>
+  <data name="Weather_Summary_Bracing" xml:space="preserve">
+    <value>身の引き締まる寒さ</value>
+  </data>
+  <data name="Weather_Summary_Chilly" xml:space="preserve">
+    <value>肌寒い</value>
+  </data>
+  <data name="Weather_Summary_Cool" xml:space="preserve">
+    <value>涼しい</value>
+  </data>
+  <data name="Weather_Summary_Mild" xml:space="preserve">
+    <value>穏やか</value>
+  </data>
+  <data name="Weather_Summary_Warm" xml:space="preserve">
+    <value>暖かい</value>
+  </data>
+  <data name="Weather_Summary_Balmy" xml:space="preserve">
+    <value>心地よい</value>
+  </data>
+  <data name="Weather_Summary_Hot" xml:space="preserve">
+    <value>暑い</value>
+  </data>
+  <data name="Weather_Summary_Sweltering" xml:space="preserve">
+    <value>蒸し暑い</value>
+  </data>
+  <data name="Weather_Summary_Scorching" xml:space="preserve">
+    <value>猛暑</value>
+  </data>
+  <data name="NotFound_Title" xml:space="preserve">
+    <value>見つかりません</value>
+  </data>
+  <data name="NotFound_Heading" xml:space="preserve">
+    <value>見つかりません</value>
+  </data>
+  <data name="NotFound_Text" xml:space="preserve">
+    <value>お探しのコンテンツは存在しません。</value>
+  </data>
+  <data name="Error_Title" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="Error_Heading" xml:space="preserve">
+    <value>エラー。</value>
+  </data>
+  <data name="Error_Subheading" xml:space="preserve">
+    <value>リクエストの処理中にエラーが発生しました。</value>
+  </data>
+  <data name="Error_RequestId" xml:space="preserve">
+    <value>リクエスト ID:</value>
+  </data>
+  <data name="Error_DevMode_Heading" xml:space="preserve">
+    <value>開発モード</value>
+  </data>
+  <data name="Error_DevMode_Line1" xml:space="preserve">
+    <value>環境を「開発 (Development)」に切り替えると、発生したエラーの詳細情報が表示されます。</value>
+  </data>
+  <data name="Error_DevMode_Line2" xml:space="preserve">
+    <value>開発環境は、デプロイ済みのアプリケーションでは有効にしないでください。例外の機微な情報が利用者に表示される可能性があります。ローカルデバッグでは ASPNETCORE_ENVIRONMENT を Development に設定してアプリを再起動してください。</value>
+  </data>
+  <data name="Lang_Japanese" xml:space="preserve">
+    <value>日本語</value>
+  </data>
+  <data name="Lang_English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Lang_Aria_Select" xml:space="preserve">
+    <value>言語を選択</value>
+  </data>
+  <data name="Lang_Current" xml:space="preserve">
+    <value>現在の言語</value>
+  </data>
+  <data name="TradeStatus_Draft" xml:space="preserve">
+    <value>下書き</value>
+  </data>
+  <data name="TradeStatus_AwaitingFunding" xml:space="preserve">
+    <value>入金待ち</value>
+  </data>
+  <data name="TradeStatus_Funded" xml:space="preserve">
+    <value>入金済み</value>
+  </data>
+  <data name="TradeStatus_AwaitingDocuments" xml:space="preserve">
+    <value>書類待ち</value>
+  </data>
+  <data name="TradeStatus_Analyzing" xml:space="preserve">
+    <value>解析中</value>
+  </data>
+  <data name="TradeStatus_ManualReview" xml:space="preserve">
+    <value>手動確認が必要</value>
+  </data>
+  <data name="TradeStatus_Blocked" xml:space="preserve">
+    <value>ブロック中</value>
+  </data>
+  <data name="TradeStatus_ReadyForApproval" xml:space="preserve">
+    <value>承認可能</value>
+  </data>
+  <data name="TradeStatus_Approved" xml:space="preserve">
+    <value>承認済み</value>
+  </data>
+  <data name="TradeStatus_Settled" xml:space="preserve">
+    <value>決済済み</value>
+  </data>
+  <data name="TradeStatus_Expired" xml:space="preserve">
+    <value>期限切れ</value>
+  </data>
+  <data name="TradeStatus_Refunded" xml:space="preserve">
+    <value>返金済み</value>
+  </data>
+  <data name="DocumentType_CommercialInvoice" xml:space="preserve">
+    <value>商業送り状</value>
+  </data>
+  <data name="DocumentType_PackingList" xml:space="preserve">
+    <value>梱包明細書</value>
+  </data>
+  <data name="DocumentType_BillOfLading" xml:space="preserve">
+    <value>船荷証券</value>
+  </data>
+  <data name="DocumentType_AirWaybill" xml:space="preserve">
+    <value>航空運送状</value>
+  </data>
+  <data name="Web3_ConnectWallet" xml:space="preserve">
+    <value>ウォレットを接続してください。</value>
+  </data>
+  <data name="Web3_SwitchNetwork" xml:space="preserve">
+    <value>HashKey Chain Testnet へ切り替えてください。</value>
+  </data>
+  <data name="Web3_ApprovingAllowance" xml:space="preserve">
+    <value>Token Allowance を承認しています。</value>
+  </data>
+  <data name="Web3_FundingEscrow" xml:space="preserve">
+    <value>エスクローへ入金しています。</value>
+  </data>
+  <data name="Web3_WaitingConfirmation" xml:space="preserve">
+    <value>トランザクションの確認を待っています。</value>
+  </data>
+  <data name="Web3_SettlementCompleted" xml:space="preserve">
+    <value>決済が完了しました。</value>
+  </data>
+  <data name="Web3_AlreadySettled" xml:space="preserve">
+    <value>この取引はすでに決済されています。</value>
+  </data>
+  <data name="Web3_WalletRejected" xml:space="preserve">
+    <value>ウォレットで操作が拒否されました。</value>
+  </data>
+  <data name="Web3_TransactionFailed" xml:space="preserve">
+    <value>トランザクションが失敗しました。</value>
+  </data>
+  <data name="Client_walletConnected" xml:space="preserve">
+    <value>ウォレットを接続しました。</value>
+  </data>
+  <data name="Client_walletNotFound" xml:space="preserve">
+    <value>ウォレットが見つかりません。</value>
+  </data>
+  <data name="Client_wrongNetwork" xml:space="preserve">
+    <value>ネットワークが正しくありません。HashKey Chain Testnet へ切り替えてください。</value>
+  </data>
+  <data name="Client_transactionPending" xml:space="preserve">
+    <value>トランザクションを処理しています...</value>
+  </data>
+  <data name="Client_transactionConfirmed" xml:space="preserve">
+    <value>トランザクションが確認されました。</value>
+  </data>
+  <data name="Client_transactionFailed" xml:space="preserve">
+    <value>トランザクションが失敗しました。</value>
+  </data>
+  <data name="Client_duplicateSettlement" xml:space="preserve">
+    <value>この取引はすでに決済されています。</value>
+  </data>
+  <data name="Client_confirmationRequired" xml:space="preserve">
+    <value>続行するには確認が必要です。</value>
+  </data>
+  <data name="Validation_TradeReference_Required" xml:space="preserve">
+    <value>取引参照番号を入力してください。</value>
+  </data>
+  <data name="Validation_TradeReference_Length" xml:space="preserve">
+    <value>取引参照番号は {2} ～ {1} 文字で入力してください。</value>
+  </data>
+  <data name="Validation_Amount_Required" xml:space="preserve">
+    <value>金額を入力してください。</value>
+  </data>
+  <data name="Validation_Amount_Range" xml:space="preserve">
+    <value>金額は {1} ～ {2} の範囲で入力してください。</value>
+  </data>
+  <data name="Validation_Email_Required" xml:space="preserve">
+    <value>メールアドレスを入力してください。</value>
+  </data>
+  <data name="Validation_Email_Invalid" xml:space="preserve">
+    <value>メールアドレスの形式が正しくありません。</value>
+  </data>
+  <data name="TradeDemo_Title" xml:space="preserve">
+    <value>取引デモ</value>
+  </data>
+  <data name="TradeDemo_Heading" xml:space="preserve">
+    <value>取引デモ（ローカライズ）</value>
+  </data>
+  <data name="TradeDemo_Intro" xml:space="preserve">
+    <value>このページはローカライズ基盤のデモです。内部 Enum 値は英語のまま、表示は選択言語に切り替わります。</value>
+  </data>
+  <data name="TradeDemo_StatusHeading" xml:space="preserve">
+    <value>取引ステータス</value>
+  </data>
+  <data name="TradeDemo_DocTypeHeading" xml:space="preserve">
+    <value>書類種別</value>
+  </data>
+  <data name="TradeDemo_Col_Internal" xml:space="preserve">
+    <value>内部値 (英語)</value>
+  </data>
+  <data name="TradeDemo_Col_Display" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="TradeDemo_Web3Heading" xml:space="preserve">
+    <value>Web3 メッセージ</value>
+  </data>
+  <data name="TradeDemo_FormHeading" xml:space="preserve">
+    <value>入力検証デモ</value>
+  </data>
+  <data name="TradeDemo_Field_TradeReference" xml:space="preserve">
+    <value>取引参照番号</value>
+  </data>
+  <data name="TradeDemo_Field_TradeReference_Help" xml:space="preserve">
+    <value>例: TRADE-2026-0001</value>
+  </data>
+  <data name="TradeDemo_Field_Amount" xml:space="preserve">
+    <value>金額 (USDC)</value>
+  </data>
+  <data name="TradeDemo_Field_Email" xml:space="preserve">
+    <value>連絡先メール</value>
+  </data>
+  <data name="TradeDemo_Submit" xml:space="preserve">
+    <value>検証</value>
+  </data>
+  <data name="TradeDemo_Valid" xml:space="preserve">
+    <value>入力は有効です。</value>
+  </data>
+  <data name="Common_Loading" xml:space="preserve">
+    <value>読み込み中…</value>
+  </data>
+  <data name="Common_NewTrade" xml:space="preserve">
+    <value>＋ 新規取引</value>
+  </data>
+  <data name="Common_Ref" xml:space="preserve">
+    <value>参照番号</value>
+  </data>
+  <data name="Common_BuyerSeller" xml:space="preserve">
+    <value>買主 / 売主</value>
+  </data>
+  <data name="Common_Amount" xml:space="preserve">
+    <value>金額</value>
+  </data>
+  <data name="Common_Status" xml:space="preserve">
+    <value>ステータス</value>
+  </data>
+  <data name="Common_Updated" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="Common_Verdict" xml:space="preserve">
+    <value>判定</value>
+  </data>
+  <data name="Common_NoTrades" xml:space="preserve">
+    <value>取引がありません。「新規取引」から作成してください。</value>
+  </data>
+  <data name="Nav_Trades" xml:space="preserve">
+    <value>取引</value>
+  </data>
+  <data name="Dash_Title" xml:space="preserve">
+    <value>ダッシュボード</value>
+  </data>
+  <data name="Dash_Subtitle" xml:space="preserve">
+    <value>条件付き貿易エスクロー決済の状況サマリー</value>
+  </data>
+  <data name="Dash_Total" xml:space="preserve">
+    <value>総取引</value>
+  </data>
+  <data name="Dash_Active" xml:space="preserve">
+    <value>進行中</value>
+  </data>
+  <data name="Dash_Attention" xml:space="preserve">
+    <value>要対応</value>
+  </data>
+  <data name="Dash_Settled" xml:space="preserve">
+    <value>決済済</value>
+  </data>
+  <data name="Dash_Refunded" xml:space="preserve">
+    <value>返金済</value>
+  </data>
+  <data name="Dash_Recent" xml:space="preserve">
+    <value>最近の取引</value>
+  </data>
+  <data name="Dash_ShowAll" xml:space="preserve">
+    <value>すべて表示 →</value>
+  </data>
+  <data name="Dash_InEscrow" xml:space="preserve">
+    <value>エスクロー保全額（進行中）</value>
+  </data>
+  <data name="Dash_NoEscrow" xml:space="preserve">
+    <value>進行中の入金はありません。</value>
+  </data>
+  <data name="Dash_StatusBreakdown" xml:space="preserve">
+    <value>ステータス内訳</value>
+  </data>
+  <data name="Dash_NoData" xml:space="preserve">
+    <value>データがありません。</value>
+  </data>
+  <data name="Trades_Title" xml:space="preserve">
+    <value>取引一覧</value>
+  </data>
+  <data name="New_Title" xml:space="preserve">
+    <value>新規取引の登録</value>
+  </data>
+  <data name="New_NoPermission" xml:space="preserve">
+    <value>現在のロールでは取引を作成できません（BuyerOperator が必要）。</value>
+  </data>
+  <data name="New_NeedCompanies" xml:space="preserve">
+    <value>会社が不足しています。デモデータのシードを確認してください。</value>
+  </data>
+  <data name="New_BuyerCompany" xml:space="preserve">
+    <value>買主会社</value>
+  </data>
+  <data name="New_SellerCompany" xml:space="preserve">
+    <value>売主会社</value>
+  </data>
+  <data name="New_Select" xml:space="preserve">
+    <value>選択…</value>
+  </data>
+  <data name="New_BuyerWallet" xml:space="preserve">
+    <value>買主ウォレット</value>
+  </data>
+  <data name="New_SellerWallet" xml:space="preserve">
+    <value>売主ウォレット（権威情報・§5）</value>
+  </data>
+  <data name="New_SellerWalletHint" xml:space="preserve">
+    <value>請求書などから自動上書きされません。</value>
+  </data>
+  <data name="New_Transport" xml:space="preserve">
+    <value>輸送手段</value>
+  </data>
+  <data name="New_Currency" xml:space="preserve">
+    <value>通貨 / トークン</value>
+  </data>
+  <data name="New_Quantity" xml:space="preserve">
+    <value>数量（任意）</value>
+  </data>
+  <data name="New_PO" xml:space="preserve">
+    <value>PO 番号（任意）</value>
+  </data>
+  <data name="New_ProductDesc" xml:space="preserve">
+    <value>商品説明（任意）</value>
+  </data>
+  <data name="New_ShipmentDate" xml:space="preserve">
+    <value>船積期限（任意）</value>
+  </data>
+  <data name="New_PaymentExpiry" xml:space="preserve">
+    <value>支払期限（任意）</value>
+  </data>
+  <data name="New_Submit" xml:space="preserve">
+    <value>取引を作成（Draft）</value>
+  </data>
+  <data name="New_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Detail_PageTitle" xml:space="preserve">
+    <value>取引詳細</value>
+  </data>
+  <data name="Detail_ConditionsLocked" xml:space="preserve">
+    <value>条件ロック済</value>
+  </data>
+  <data name="Detail_BackToList" xml:space="preserve">
+    <value>← 一覧</value>
+  </data>
+  <data name="Detail_Conditions" xml:space="preserve">
+    <value>取引条件</value>
+  </data>
+  <data name="Detail_SellerWallet" xml:space="preserve">
+    <value>売主ウォレット</value>
+  </data>
+  <data name="Detail_Transport" xml:space="preserve">
+    <value>輸送手段</value>
+  </data>
+  <data name="Detail_Quantity" xml:space="preserve">
+    <value>数量</value>
+  </data>
+  <data name="Detail_ShipmentDate" xml:space="preserve">
+    <value>船積期限</value>
+  </data>
+  <data name="Detail_PaymentExpiry" xml:space="preserve">
+    <value>支払期限</value>
+  </data>
+  <data name="Detail_Documents" xml:space="preserve">
+    <value>書類</value>
+  </data>
+  <data name="Detail_NotSubmitted" xml:space="preserve">
+    <value>未提出</value>
+  </data>
+  <data name="Detail_Submitted" xml:space="preserve">
+    <value>提出済</value>
+  </data>
+  <data name="Detail_DocType" xml:space="preserve">
+    <value>書類種別</value>
+  </data>
+  <data name="Detail_FileLabel" xml:space="preserve">
+    <value>ファイル（任意のファイル / デモ用 JSON 可）</value>
+  </data>
+  <data name="Detail_SubmitDoc" xml:space="preserve">
+    <value>提出</value>
+  </data>
+  <data name="Detail_DemoJsonHint" xml:space="preserve">
+    <value>デモでは JSON（例: {"fields":{"totalAmount":1000,"currency":"USDC"}}）で不一致を注入できます。</value>
+  </data>
+  <data name="Detail_MatchResult" xml:space="preserve">
+    <value>照合結果（最新）</value>
+  </data>
+  <data name="Detail_AiRisk" xml:space="preserve">
+    <value>AIリスク</value>
+  </data>
+  <data name="Detail_Rule" xml:space="preserve">
+    <value>ルール</value>
+  </data>
+  <data name="Detail_Result" xml:space="preserve">
+    <value>結果</value>
+  </data>
+  <data name="Detail_Expected" xml:space="preserve">
+    <value>期待</value>
+  </data>
+  <data name="Detail_Actual" xml:space="preserve">
+    <value>実際</value>
+  </data>
+  <data name="Detail_NeedsCheck" xml:space="preserve">
+    <value>要確認</value>
+  </data>
+  <data name="Detail_NG" xml:space="preserve">
+    <value>NG</value>
+  </data>
+  <data name="Detail_Actions" xml:space="preserve">
+    <value>アクション</value>
+  </data>
+  <data name="Detail_NoActions" xml:space="preserve">
+    <value>現在のロール・状態で実行できる操作はありません。</value>
+  </data>
+  <data name="Detail_OnChain" xml:space="preserve">
+    <value>オンチェーン取引</value>
+  </data>
+  <data name="Detail_Audit" xml:space="preserve">
+    <value>監査証跡</value>
+  </data>
+  <data name="Detail_Act_RequestApproval" xml:space="preserve">
+    <value>承認を依頼</value>
+  </data>
+  <data name="Detail_Act_ApproveConditions" xml:space="preserve">
+    <value>条件を承認（ロック）</value>
+  </data>
+  <data name="Detail_Act_Fund" xml:space="preserve">
+    <value>エスクロー入金</value>
+  </data>
+  <data name="Detail_Act_RunAnalysis" xml:space="preserve">
+    <value>解析・照合を実行</value>
+  </data>
+  <data name="Detail_Act_Verify" xml:space="preserve">
+    <value>書類を検証（承認へ）</value>
+  </data>
+  <data name="Detail_Act_RejectToResubmit" xml:space="preserve">
+    <value>差し戻し（書類却下）</value>
+  </data>
+  <data name="Detail_Act_ManualReview" xml:space="preserve">
+    <value>人手レビューに回す</value>
+  </data>
+  <data name="Detail_Act_RejectBlocked" xml:space="preserve">
+    <value>書類を却下（再提出へ）</value>
+  </data>
+  <data name="Detail_Act_ApprovePayment" xml:space="preserve">
+    <value>支払を承認</value>
+  </data>
+  <data name="Detail_Act_Settle" xml:space="preserve">
+    <value>決済を実行（送金）</value>
+  </data>
+  <data name="Detail_Act_Refund" xml:space="preserve">
+    <value>買主へ返金</value>
+  </data>
+  <data name="Detail_Act_ForceExpire" xml:space="preserve">
+    <value>（デモ）期限切れにする</value>
+  </data>
+  <data name="Detail_Act_Cancel" xml:space="preserve">
+    <value>取引をキャンセル</value>
+  </data>
+  <data name="Detail_Msg_Submitted" xml:space="preserve">
+    <value>{0} を提出しました。</value>
+  </data>
+  <data name="Detail_Msg_MissingDocs" xml:space="preserve">
+    <value>必須書類が不足: {0}</value>
+  </data>
+  <data name="Detail_Reject_Verifier" xml:space="preserve">
+    <value>検証者による差し戻し</value>
+  </data>
+  <data name="Detail_Reject_Mismatch" xml:space="preserve">
+    <value>不一致のため却下</value>
+  </data>
+  <data name="Detail_Cancel_Reason" xml:space="preserve">
+    <value>ユーザーによるキャンセル</value>
+  </data>
+  <data name="Demo_NotSeeded" xml:space="preserve">
+    <value>デモユーザー未シード</value>
+  </data>
+  <data name="Master_Companies" xml:space="preserve">
+    <value>会社マスター</value>
+  </data>
+  <data name="Master_Users" xml:space="preserve">
+    <value>ユーザーマスター</value>
+  </data>
+  <data name="Master_NoAccess" xml:space="preserve">
+    <value>この画面は管理者ロールでのみ利用できます。</value>
+  </data>
+  <data name="Master_Company_New" xml:space="preserve">
+    <value>＋ 会社を追加</value>
+  </data>
+  <data name="Master_User_New" xml:space="preserve">
+    <value>＋ ユーザーを追加</value>
+  </data>
+  <data name="Master_Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="Master_Wallet" xml:space="preserve">
+    <value>ウォレットアドレス</value>
+  </data>
+  <data name="Master_Country" xml:space="preserve">
+    <value>国コード</value>
+  </data>
+  <data name="Master_DisplayName" xml:space="preserve">
+    <value>表示名</value>
+  </data>
+  <data name="Master_Email" xml:space="preserve">
+    <value>メールアドレス</value>
+  </data>
+  <data name="Master_Company" xml:space="preserve">
+    <value>所属会社</value>
+  </data>
+  <data name="Master_NoCompany" xml:space="preserve">
+    <value>所属なし</value>
+  </data>
+  <data name="Master_Roles" xml:space="preserve">
+    <value>ロール</value>
+  </data>
+  <data name="Master_Culture" xml:space="preserve">
+    <value>優先言語</value>
+  </data>
+  <data name="Master_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Master_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Master_Edit" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="Master_Delete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="Master_ConfirmDelete" xml:space="preserve">
+    <value>削除しますか？</value>
+  </data>
+  <data name="Master_Created" xml:space="preserve">
+    <value>追加しました。</value>
+  </data>
+  <data name="Master_Updated" xml:space="preserve">
+    <value>更新しました。</value>
+  </data>
+  <data name="Master_Deleted" xml:space="preserve">
+    <value>削除しました。</value>
+  </data>
+  <data name="Agent_Title" xml:space="preserve">
+    <value>AIエージェント</value>
+  </data>
+  <data name="Agent_Intro" xml:space="preserve">
+    <value>会話しながら取引ライフサイクルを進められます。状態の確認や操作をお願いできます。</value>
+  </data>
+  <data name="Agent_NotConfigured" xml:space="preserve">
+    <value>エージェントは未設定です。Azure OpenAI のエンドポイント・キー・デプロイメントを設定すると利用できます。</value>
+  </data>
+  <data name="Agent_NeedUser" xml:space="preserve">
+    <value>エージェントを使うにはユーザーを選択してください。</value>
+  </data>
+  <data name="Agent_Placeholder" xml:space="preserve">
+    <value>例：「未承認の取引を一覧して」「取引3の条件を承認して」などと入力してください。</value>
+  </data>
+  <data name="Agent_Thinking" xml:space="preserve">
+    <value>処理中…</value>
+  </data>
+  <data name="Agent_InputPlaceholder" xml:space="preserve">
+    <value>メッセージを入力（Enterで送信）</value>
+  </data>
+  <data name="Agent_Send" xml:space="preserve">
+    <value>送信</value>
+  </data>
+  <data name="Agent_NoReply" xml:space="preserve">
+    <value>（応答がありませんでした）</value>
+  </data>
+  <data name="Agent_Error" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+
+  <data name="Settings_Title" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Settings_Intro" xml:space="preserve">
+    <value>自社（買主・輸入企業）とウォレットを設定します。取引作成時の買主はこの自社に固定されます。</value>
+  </data>
+  <data name="Settings_NoAccess" xml:space="preserve">
+    <value>設定を変更する権限がありません。</value>
+  </data>
+  <data name="Settings_OwnCompany" xml:space="preserve">
+    <value>自社（買主企業）</value>
+  </data>
+  <data name="Settings_OwnCompanyHint" xml:space="preserve">
+    <value>このアプリを運用する買主・輸入企業を選択します。</value>
+  </data>
+  <data name="Settings_OwnWallet" xml:space="preserve">
+    <value>自社ウォレット</value>
+  </data>
+  <data name="Settings_OwnWalletHint" xml:space="preserve">
+    <value>エスクローへの入金元となる自社のウォレットアドレス。</value>
+  </data>
+  <data name="Settings_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Settings_Saved" xml:space="preserve">
+    <value>設定を保存しました。</value>
+  </data>
+  <data name="New_BuyerFixedHint" xml:space="preserve">
+    <value>買主は設定画面の自社に固定されています。</value>
+  </data>
+
+</root>

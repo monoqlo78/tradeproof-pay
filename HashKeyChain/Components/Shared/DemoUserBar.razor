@@ -1,0 +1,87 @@
+@rendermode InteractiveServer
+@using HashKeyChain.Data
+@using HashKeyChain.Domain
+@using HashKeyChain.Services.Security
+@using Microsoft.EntityFrameworkCore
+@implements IDisposable
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject ICurrentUserContext CurrentUser
+@inject IStringLocalizer<SharedResource> L
+
+<div class="d-flex align-items-center gap-2">
+    <span class="bi" aria-hidden="true">👤</span>
+    @if (_users.Count == 0)
+    {
+        <span class="text-muted small">@L["Demo_NotSeeded"]</span>
+    }
+    else
+    {
+        <select class="form-select form-select-sm w-auto" @onchange="OnUserChanged" value="@CurrentUser.User?.Id">
+            @foreach (var u in _users)
+            {
+                <option value="@u.Id">@u.DisplayName</option>
+            }
+        </select>
+
+        @if (CurrentUser.User is not null && VisibleRoles.Count > 1)
+        {
+            <select class="form-select form-select-sm w-auto" @onchange="OnRoleChanged" value="@CurrentUser.ActiveRole">
+                @foreach (var r in VisibleRoles)
+                {
+                    <option value="@r">@r</option>
+                }
+            </select>
+        }
+        else if (CurrentUser.ActiveRole is { } role)
+        {
+            <span class="badge bg-secondary">@role</span>
+        }
+    }
+</div>
+
+@code {
+    private static readonly TradeRole[] BuyerRoles =
+        { TradeRole.BuyerOperator, TradeRole.BuyerApprover, TradeRole.Administrator };
+
+    private List<AppUser> _users = new();
+
+    // 買主側デモに集中するため、切替可能なロールも買主側（オペレーター/承認者/管理者）に限定する。
+    private IReadOnlyList<TradeRole> VisibleRoles =>
+        CurrentUser.HeldRoles.Where(BuyerRoles.Contains).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var all = await db.Users.Include(u => u.Roles).OrderBy(u => u.Id).AsNoTracking().ToListAsync();
+
+        // 買主・輸入企業側のデモに集中するため、買主ロール（オペレーター/承認者/管理者）
+        // を持つユーザーのみ提示し、売主・検証者の担当者は隠す。
+        var buyerRoles = new[] { TradeRole.BuyerOperator, TradeRole.BuyerApprover, TradeRole.Administrator };
+        _users = all.Where(u => u.Roles.Any(r => buyerRoles.Contains(r.Role))).ToList();
+
+        if (CurrentUser.User is null && _users.Count > 0)
+            CurrentUser.SetUser(_users[0]);
+
+        CurrentUser.Changed += OnContextChanged;
+    }
+
+    private void OnUserChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var id))
+        {
+            var user = _users.FirstOrDefault(u => u.Id == id);
+            if (user is not null)
+                CurrentUser.SetUser(user);
+        }
+    }
+
+    private void OnRoleChanged(ChangeEventArgs e)
+    {
+        if (Enum.TryParse<TradeRole>(e.Value?.ToString(), out var role))
+            CurrentUser.SetActiveRole(role);
+    }
+
+    private void OnContextChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => CurrentUser.Changed -= OnContextChanged;
+}

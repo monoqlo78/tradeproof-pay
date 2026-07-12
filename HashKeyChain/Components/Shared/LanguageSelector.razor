@@ -1,0 +1,38 @@
+@using System.Globalization
+@inject NavigationManager Nav
+@inject IStringLocalizer<SharedResource> L
+
+<div class="language-selector" role="group" aria-label="@L["Lang_Aria_Select"]">
+    @foreach (var option in Options)
+    {
+        var isCurrent = string.Equals(_current, option.Culture, StringComparison.OrdinalIgnoreCase);
+        <a class="lang-link@(isCurrent ? " active" : string.Empty)"
+           href="@BuildUrl(option.Culture)"
+           data-enhance-nav="false"
+           lang="@option.Lang"
+           title="@(isCurrent ? L["Lang_Current"].Value : L[option.LabelKey].Value)"
+           aria-current="@(isCurrent ? "true" : null)">
+            @L[option.LabelKey]
+        </a>
+    }
+</div>
+
+@code {
+    private readonly string _current = CultureInfo.CurrentUICulture.Name;
+
+    private static readonly CultureOption[] Options =
+    {
+        new("ja-JP", "Lang_Japanese", "ja"),
+        new("en-US", "Lang_English", "en"),
+    };
+
+    private string BuildUrl(string culture)
+    {
+        // Full navigation to the controller so the culture cookie is set outside
+        // the Blazor circuit; return to the current page afterwards.
+        var returnUrl = "/" + Nav.ToBaseRelativePath(Nav.Uri);
+        return $"/Culture/Set?culture={Uri.EscapeDataString(culture)}&redirectUri={Uri.EscapeDataString(returnUrl)}";
+    }
+
+    private sealed record CultureOption(string Culture, string LabelKey, string Lang);
+}

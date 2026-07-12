@@ -1,0 +1,231 @@
+@page "/master/users"
+@rendermode InteractiveServer
+@using HashKeyChain.Domain
+@using HashKeyChain.Services.Master
+@using HashKeyChain.Services.Security
+@inject IMasterDataService Master
+@inject ICurrentUserContext CurrentUser
+@inject IEnumLocalizer EnumL
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["Master_Users"] — TradeProof Pay</PageTitle>
+
+@if (!CurrentUser.Can(TradeOperation.ManageDemoData))
+{
+    <div class="alert alert-warning">@L["Master_NoAccess"]</div>
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">@L["Master_Users"]</h1>
+        <div class="btn-group">
+            <a class="btn btn-outline-secondary" href="/master/companies">@L["Master_Companies"]</a>
+            <button class="btn btn-primary" @onclick="StartCreate">@L["Master_User_New"]</button>
+        </div>
+    </div>
+
+    @if (_error is not null)
+    {
+        <div class="alert alert-danger">@_error</div>
+    }
+    @if (_info is not null)
+    {
+        <div class="alert alert-success">@_info</div>
+    }
+
+    @if (_editing is not null)
+    {
+        <div class="card mb-3">
+            <div class="card-header fw-bold">@(_editingId == 0 ? L["Master_User_New"] : L["Master_Edit"])</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Master_DisplayName"]</label>
+                        <input class="form-control" @bind="_editing.DisplayName" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">@L["Master_Email"]</label>
+                        <input class="form-control" @bind="_editing.Email" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">@L["Master_Company"]</label>
+                        <select class="form-select" @bind="_editing.CompanyId">
+                            <option value="">@L["Master_NoCompany"]</option>
+                            @foreach (var c in _companies)
+                            {
+                                <option value="@c.Id">@c.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">@L["Master_Culture"]</label>
+                        <select class="form-select" @bind="_editing.PreferredCulture">
+                            <option value="ja-JP">日本語</option>
+                            <option value="en-US">English</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label">@L["Master_Roles"]</label>
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach (var role in _allRoles)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="role-@role"
+                                       checked="@_selectedRoles.Contains(role)"
+                                       @onchange="e => ToggleRole(role, (bool)e.Value!)" />
+                                <label class="form-check-label" for="role-@role">@EnumL.Localize(role)</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="mt-3 d-flex gap-2">
+                    <button class="btn btn-primary" @onclick="SaveAsync" disabled="@_busy">@L["Master_Save"]</button>
+                    <button class="btn btn-outline-secondary" @onclick="Cancel" disabled="@_busy">@L["Master_Cancel"]</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (_users is null)
+    {
+        <p>@L["Common_Loading"]</p>
+    }
+    else
+    {
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>@L["Master_DisplayName"]</th>
+                    <th>@L["Master_Email"]</th>
+                    <th>@L["Master_Company"]</th>
+                    <th>@L["Master_Roles"]</th>
+                    <th>@L["Master_Culture"]</th>
+                    <th class="text-end"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in _users)
+                {
+                    <tr>
+                        <td>@u.Id</td>
+                        <td>@u.DisplayName</td>
+                        <td class="small">@u.Email</td>
+                        <td>@(u.Company?.Name ?? "—")</td>
+                        <td>
+                            @foreach (var r in u.Roles)
+                            {
+                                <span class="badge bg-secondary me-1">@EnumL.Localize(r.Role)</span>
+                            }
+                        </td>
+                        <td>@u.PreferredCulture</td>
+                        <td class="text-end">
+                            @if (_confirmDeleteId == u.Id)
+                            {
+                                <span class="me-2 small">@L["Master_ConfirmDelete"]</span>
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteAsync(u.Id)" disabled="@_busy">@L["Master_Delete"]</button>
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => _confirmDeleteId = null">@L["Master_Cancel"]</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => StartEdit(u)">@L["Master_Edit"]</button>
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => _confirmDeleteId = u.Id">@L["Master_Delete"]</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private IReadOnlyList<AppUser>? _users;
+    private IReadOnlyList<Company> _companies = Array.Empty<Company>();
+    private static readonly TradeRole[] _allRoles = Enum.GetValues<TradeRole>();
+
+    private AppUser? _editing;
+    private int _editingId;
+    private HashSet<TradeRole> _selectedRoles = new();
+    private int? _confirmDeleteId;
+    private string? _error;
+    private string? _info;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _companies = await Master.GetCompaniesAsync();
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync() => _users = await Master.GetUsersAsync();
+
+    private void StartCreate()
+    {
+        _editing = new AppUser { PreferredCulture = "ja-JP" };
+        _editingId = 0;
+        _selectedRoles = new();
+        _info = _error = null;
+    }
+
+    private void StartEdit(AppUser u)
+    {
+        _editing = new AppUser
+        {
+            Id = u.Id,
+            DisplayName = u.DisplayName,
+            Email = u.Email,
+            CompanyId = u.CompanyId,
+            PreferredCulture = u.PreferredCulture
+        };
+        _editingId = u.Id;
+        _selectedRoles = u.Roles.Select(r => r.Role).ToHashSet();
+        _info = _error = null;
+    }
+
+    private void ToggleRole(TradeRole role, bool on)
+    {
+        if (on) _selectedRoles.Add(role);
+        else _selectedRoles.Remove(role);
+    }
+
+    private void Cancel() => _editing = null;
+
+    private async Task SaveAsync()
+    {
+        if (_editing is null) return;
+        _busy = true; _error = _info = null;
+        try
+        {
+            if (_editingId == 0)
+            {
+                await Master.CreateUserAsync(_editing, _selectedRoles);
+                _info = L["Master_Created"];
+            }
+            else
+            {
+                await Master.UpdateUserAsync(_editingId, _editing, _selectedRoles);
+                _info = L["Master_Updated"];
+            }
+            _editing = null;
+            await LoadAsync();
+        }
+        catch (Exception ex) { _error = ex.Message; }
+        finally { _busy = false; }
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        _busy = true; _error = _info = null;
+        try
+        {
+            await Master.DeleteUserAsync(id);
+            _info = L["Master_Deleted"];
+            _confirmDeleteId = null;
+            await LoadAsync();
+        }
+        catch (Exception ex) { _error = ex.Message; }
+        finally { _busy = false; }
+    }
+}

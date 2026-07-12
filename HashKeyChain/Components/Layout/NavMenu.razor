@@ -1,0 +1,61 @@
+﻿@rendermode InteractiveServer
+@using HashKeyChain.Services.Security
+@implements IDisposable
+@inject IStringLocalizer<SharedResource> L
+@inject ICurrentUserContext CurrentUser
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">TradeProof Pay</a>
+    </div>
+</div>
+
+<input type="checkbox" title="@L["Layout_SkipToContent"]" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> @L["Dash_Title"]
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="trades">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> @L["Nav_Trades"]
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="agent">
+                <span class="bi bi-chat-dots-fill-nav-menu" aria-hidden="true"></span> @L["Agent_Title"]
+            </NavLink>
+        </div>
+
+        @if (CurrentUser.Can(TradeOperation.ManageDemoData))
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="master/companies">
+                    <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span> @L["Master_Companies"]
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="master/users">
+                    <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> @L["Master_Users"]
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="settings">
+                    <span class="bi bi-gear-fill-nav-menu" aria-hidden="true"></span> @L["Settings_Title"]
+                </NavLink>
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    protected override void OnInitialized() => CurrentUser.Changed += OnChanged;
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+    public void Dispose() => CurrentUser.Changed -= OnChanged;
+}
+

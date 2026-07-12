@@ -1,0 +1,766 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Nav_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Nav_Counter" xml:space="preserve">
+    <value>Counter</value>
+  </data>
+  <data name="Nav_Weather" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="Nav_TradeDemo" xml:space="preserve">
+    <value>Trade Demo</value>
+  </data>
+  <data name="Layout_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Layout_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Layout_SkipToContent" xml:space="preserve">
+    <value>Skip to content</value>
+  </data>
+  <data name="ErrorUi_Unhandled" xml:space="preserve">
+    <value>An unhandled error has occurred.</value>
+  </data>
+  <data name="ErrorUi_Reload" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="ErrorUi_Dismiss" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
+  <data name="Meta_Description" xml:space="preserve">
+    <value>HashKeyChain — blockchain trade finance demo</value>
+  </data>
+  <data name="Home_Title" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Home_Heading" xml:space="preserve">
+    <value>Hello, world!</value>
+  </data>
+  <data name="Home_Welcome" xml:space="preserve">
+    <value>Welcome to your new app.</value>
+  </data>
+  <data name="Counter_Title" xml:space="preserve">
+    <value>Counter</value>
+  </data>
+  <data name="Counter_Heading" xml:space="preserve">
+    <value>Counter</value>
+  </data>
+  <data name="Counter_CurrentCount" xml:space="preserve">
+    <value>Current count: {0}</value>
+  </data>
+  <data name="Counter_ClickMe" xml:space="preserve">
+    <value>Click me</value>
+  </data>
+  <data name="Weather_Title" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="Weather_Heading" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="Weather_Intro" xml:space="preserve">
+    <value>This component demonstrates showing data.</value>
+  </data>
+  <data name="Weather_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Weather_Col_Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Weather_Col_TempC" xml:space="preserve">
+    <value>Temp. (C)</value>
+  </data>
+  <data name="Weather_Col_TempF" xml:space="preserve">
+    <value>Temp. (F)</value>
+  </data>
+  <data name="Weather_Col_Summary" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="Weather_Aria_TempC" xml:space="preserve">
+    <value>Temperature in Celsius</value>
+  </data>
+  <data name="Weather_Aria_TempF" xml:space="preserve">
+    <value>Temperature in Fahrenheit</value>
+  </data>
+  <data name="Weather_Summary_Freezing" xml:space="preserve">
+    <value>Freezing</value>
+  </data>
+  <data name="Weather_Summary_Bracing" xml:space="preserve">
+    <value>Bracing</value>
+  </data>
+  <data name="Weather_Summary_Chilly" xml:space="preserve">
+    <value>Chilly</value>
+  </data>
+  <data name="Weather_Summary_Cool" xml:space="preserve">
+    <value>Cool</value>
+  </data>
+  <data name="Weather_Summary_Mild" xml:space="preserve">
+    <value>Mild</value>
+  </data>
+  <data name="Weather_Summary_Warm" xml:space="preserve">
+    <value>Warm</value>
+  </data>
+  <data name="Weather_Summary_Balmy" xml:space="preserve">
+    <value>Balmy</value>
+  </data>
+  <data name="Weather_Summary_Hot" xml:space="preserve">
+    <value>Hot</value>
+  </data>
+  <data name="Weather_Summary_Sweltering" xml:space="preserve">
+    <value>Sweltering</value>
+  </data>
+  <data name="Weather_Summary_Scorching" xml:space="preserve">
+    <value>Scorching</value>
+  </data>
+  <data name="NotFound_Title" xml:space="preserve">
+    <value>Not Found</value>
+  </data>
+  <data name="NotFound_Heading" xml:space="preserve">
+    <value>Not Found</value>
+  </data>
+  <data name="NotFound_Text" xml:space="preserve">
+    <value>Sorry, the content you are looking for does not exist.</value>
+  </data>
+  <data name="Error_Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Error_Heading" xml:space="preserve">
+    <value>Error.</value>
+  </data>
+  <data name="Error_Subheading" xml:space="preserve">
+    <value>An error occurred while processing your request.</value>
+  </data>
+  <data name="Error_RequestId" xml:space="preserve">
+    <value>Request ID:</value>
+  </data>
+  <data name="Error_DevMode_Heading" xml:space="preserve">
+    <value>Development Mode</value>
+  </data>
+  <data name="Error_DevMode_Line1" xml:space="preserve">
+    <value>Swapping to the Development environment will display more detailed information about the error that occurred.</value>
+  </data>
+  <data name="Error_DevMode_Line2" xml:space="preserve">
+    <value>The Development environment shouldn&apos;t be enabled for deployed applications. It can result in displaying sensitive information from exceptions to end users. For local debugging, enable the Development environment by setting the ASPNETCORE_ENVIRONMENT environment variable to Development and restarting the app.</value>
+  </data>
+  <data name="Lang_Japanese" xml:space="preserve">
+    <value>日本語</value>
+  </data>
+  <data name="Lang_English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Lang_Aria_Select" xml:space="preserve">
+    <value>Select language</value>
+  </data>
+  <data name="Lang_Current" xml:space="preserve">
+    <value>Current language</value>
+  </data>
+  <data name="TradeStatus_Draft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="TradeStatus_AwaitingFunding" xml:space="preserve">
+    <value>Awaiting funding</value>
+  </data>
+  <data name="TradeStatus_Funded" xml:space="preserve">
+    <value>Funded</value>
+  </data>
+  <data name="TradeStatus_AwaitingDocuments" xml:space="preserve">
+    <value>Awaiting documents</value>
+  </data>
+  <data name="TradeStatus_Analyzing" xml:space="preserve">
+    <value>Analyzing</value>
+  </data>
+  <data name="TradeStatus_ManualReview" xml:space="preserve">
+    <value>Manual review required</value>
+  </data>
+  <data name="TradeStatus_Blocked" xml:space="preserve">
+    <value>Blocked</value>
+  </data>
+  <data name="TradeStatus_ReadyForApproval" xml:space="preserve">
+    <value>Ready for approval</value>
+  </data>
+  <data name="TradeStatus_Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="TradeStatus_Settled" xml:space="preserve">
+    <value>Settled</value>
+  </data>
+  <data name="TradeStatus_Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="TradeStatus_Refunded" xml:space="preserve">
+    <value>Refunded</value>
+  </data>
+  <data name="DocumentType_CommercialInvoice" xml:space="preserve">
+    <value>Commercial Invoice</value>
+  </data>
+  <data name="DocumentType_PackingList" xml:space="preserve">
+    <value>Packing List</value>
+  </data>
+  <data name="DocumentType_BillOfLading" xml:space="preserve">
+    <value>Bill of Lading</value>
+  </data>
+  <data name="DocumentType_AirWaybill" xml:space="preserve">
+    <value>Air Waybill</value>
+  </data>
+  <data name="Web3_ConnectWallet" xml:space="preserve">
+    <value>Connect your wallet.</value>
+  </data>
+  <data name="Web3_SwitchNetwork" xml:space="preserve">
+    <value>Switch to HashKey Chain Testnet.</value>
+  </data>
+  <data name="Web3_ApprovingAllowance" xml:space="preserve">
+    <value>Approving token allowance.</value>
+  </data>
+  <data name="Web3_FundingEscrow" xml:space="preserve">
+    <value>Funding the escrow.</value>
+  </data>
+  <data name="Web3_WaitingConfirmation" xml:space="preserve">
+    <value>Waiting for transaction confirmation.</value>
+  </data>
+  <data name="Web3_SettlementCompleted" xml:space="preserve">
+    <value>Settlement completed.</value>
+  </data>
+  <data name="Web3_AlreadySettled" xml:space="preserve">
+    <value>This trade has already been settled.</value>
+  </data>
+  <data name="Web3_WalletRejected" xml:space="preserve">
+    <value>The wallet operation was rejected.</value>
+  </data>
+  <data name="Web3_TransactionFailed" xml:space="preserve">
+    <value>The transaction failed.</value>
+  </data>
+  <data name="Client_walletConnected" xml:space="preserve">
+    <value>Wallet connected.</value>
+  </data>
+  <data name="Client_walletNotFound" xml:space="preserve">
+    <value>Wallet not found.</value>
+  </data>
+  <data name="Client_wrongNetwork" xml:space="preserve">
+    <value>Wrong network. Switch to HashKey Chain Testnet.</value>
+  </data>
+  <data name="Client_transactionPending" xml:space="preserve">
+    <value>Transaction pending...</value>
+  </data>
+  <data name="Client_transactionConfirmed" xml:space="preserve">
+    <value>Transaction confirmed.</value>
+  </data>
+  <data name="Client_transactionFailed" xml:space="preserve">
+    <value>Transaction failed.</value>
+  </data>
+  <data name="Client_duplicateSettlement" xml:space="preserve">
+    <value>This trade has already been settled.</value>
+  </data>
+  <data name="Client_confirmationRequired" xml:space="preserve">
+    <value>Confirmation is required to continue.</value>
+  </data>
+  <data name="Validation_TradeReference_Required" xml:space="preserve">
+    <value>Enter the trade reference.</value>
+  </data>
+  <data name="Validation_TradeReference_Length" xml:space="preserve">
+    <value>The trade reference must be between {2} and {1} characters.</value>
+  </data>
+  <data name="Validation_Amount_Required" xml:space="preserve">
+    <value>Enter the amount.</value>
+  </data>
+  <data name="Validation_Amount_Range" xml:space="preserve">
+    <value>The amount must be between {1} and {2}.</value>
+  </data>
+  <data name="Validation_Email_Required" xml:space="preserve">
+    <value>Enter the email address.</value>
+  </data>
+  <data name="Validation_Email_Invalid" xml:space="preserve">
+    <value>The email address is not valid.</value>
+  </data>
+  <data name="TradeDemo_Title" xml:space="preserve">
+    <value>Trade Demo</value>
+  </data>
+  <data name="TradeDemo_Heading" xml:space="preserve">
+    <value>Trade Demo (Localization)</value>
+  </data>
+  <data name="TradeDemo_Intro" xml:space="preserve">
+    <value>This page demonstrates the localization infrastructure. Internal enum values stay in English while the display switches with the selected language.</value>
+  </data>
+  <data name="TradeDemo_StatusHeading" xml:space="preserve">
+    <value>Trade Statuses</value>
+  </data>
+  <data name="TradeDemo_DocTypeHeading" xml:space="preserve">
+    <value>Document Types</value>
+  </data>
+  <data name="TradeDemo_Col_Internal" xml:space="preserve">
+    <value>Internal value (English)</value>
+  </data>
+  <data name="TradeDemo_Col_Display" xml:space="preserve">
+    <value>Display</value>
+  </data>
+  <data name="TradeDemo_Web3Heading" xml:space="preserve">
+    <value>Web3 Messages</value>
+  </data>
+  <data name="TradeDemo_FormHeading" xml:space="preserve">
+    <value>Validation Demo</value>
+  </data>
+  <data name="TradeDemo_Field_TradeReference" xml:space="preserve">
+    <value>Trade reference</value>
+  </data>
+  <data name="TradeDemo_Field_TradeReference_Help" xml:space="preserve">
+    <value>e.g. TRADE-2026-0001</value>
+  </data>
+  <data name="TradeDemo_Field_Amount" xml:space="preserve">
+    <value>Amount (USDC)</value>
+  </data>
+  <data name="TradeDemo_Field_Email" xml:space="preserve">
+    <value>Contact email</value>
+  </data>
+  <data name="TradeDemo_Submit" xml:space="preserve">
+    <value>Validate</value>
+  </data>
+  <data name="TradeDemo_Valid" xml:space="preserve">
+    <value>The input is valid.</value>
+  </data>
+  <data name="Common_Loading" xml:space="preserve">
+    <value>Loading…</value>
+  </data>
+  <data name="Common_NewTrade" xml:space="preserve">
+    <value>+ New trade</value>
+  </data>
+  <data name="Common_Ref" xml:space="preserve">
+    <value>Reference</value>
+  </data>
+  <data name="Common_BuyerSeller" xml:space="preserve">
+    <value>Buyer / Seller</value>
+  </data>
+  <data name="Common_Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Common_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Common_Updated" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="Common_Verdict" xml:space="preserve">
+    <value>Verdict</value>
+  </data>
+  <data name="Common_NoTrades" xml:space="preserve">
+    <value>No trades yet. Create one using New trade.</value>
+  </data>
+  <data name="Nav_Trades" xml:space="preserve">
+    <value>Trades</value>
+  </data>
+  <data name="Dash_Title" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Dash_Subtitle" xml:space="preserve">
+    <value>Overview of conditional trade-escrow settlement</value>
+  </data>
+  <data name="Dash_Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Dash_Active" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="Dash_Attention" xml:space="preserve">
+    <value>Needs attention</value>
+  </data>
+  <data name="Dash_Settled" xml:space="preserve">
+    <value>Settled</value>
+  </data>
+  <data name="Dash_Refunded" xml:space="preserve">
+    <value>Refunded</value>
+  </data>
+  <data name="Dash_Recent" xml:space="preserve">
+    <value>Recent trades</value>
+  </data>
+  <data name="Dash_ShowAll" xml:space="preserve">
+    <value>Show all →</value>
+  </data>
+  <data name="Dash_InEscrow" xml:space="preserve">
+    <value>In escrow (in progress)</value>
+  </data>
+  <data name="Dash_NoEscrow" xml:space="preserve">
+    <value>No active funds.</value>
+  </data>
+  <data name="Dash_StatusBreakdown" xml:space="preserve">
+    <value>Status breakdown</value>
+  </data>
+  <data name="Dash_NoData" xml:space="preserve">
+    <value>No data.</value>
+  </data>
+  <data name="Trades_Title" xml:space="preserve">
+    <value>Trades</value>
+  </data>
+  <data name="New_Title" xml:space="preserve">
+    <value>Register a new trade</value>
+  </data>
+  <data name="New_NoPermission" xml:space="preserve">
+    <value>Your current role cannot create trades (BuyerOperator required).</value>
+  </data>
+  <data name="New_NeedCompanies" xml:space="preserve">
+    <value>Not enough companies. Check the demo data seed.</value>
+  </data>
+  <data name="New_BuyerCompany" xml:space="preserve">
+    <value>Buyer company</value>
+  </data>
+  <data name="New_SellerCompany" xml:space="preserve">
+    <value>Seller company</value>
+  </data>
+  <data name="New_Select" xml:space="preserve">
+    <value>Select…</value>
+  </data>
+  <data name="New_BuyerWallet" xml:space="preserve">
+    <value>Buyer wallet</value>
+  </data>
+  <data name="New_SellerWallet" xml:space="preserve">
+    <value>Seller wallet (authoritative, §5)</value>
+  </data>
+  <data name="New_SellerWalletHint" xml:space="preserve">
+    <value>Not auto-overwritten from invoices.</value>
+  </data>
+  <data name="New_Transport" xml:space="preserve">
+    <value>Transport mode</value>
+  </data>
+  <data name="New_Currency" xml:space="preserve">
+    <value>Currency / token</value>
+  </data>
+  <data name="New_Quantity" xml:space="preserve">
+    <value>Quantity (optional)</value>
+  </data>
+  <data name="New_PO" xml:space="preserve">
+    <value>PO number (optional)</value>
+  </data>
+  <data name="New_ProductDesc" xml:space="preserve">
+    <value>Product description (optional)</value>
+  </data>
+  <data name="New_ShipmentDate" xml:space="preserve">
+    <value>Latest shipment date (optional)</value>
+  </data>
+  <data name="New_PaymentExpiry" xml:space="preserve">
+    <value>Payment expiry (optional)</value>
+  </data>
+  <data name="New_Submit" xml:space="preserve">
+    <value>Create trade (Draft)</value>
+  </data>
+  <data name="New_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Detail_PageTitle" xml:space="preserve">
+    <value>Trade details</value>
+  </data>
+  <data name="Detail_ConditionsLocked" xml:space="preserve">
+    <value>Conditions locked</value>
+  </data>
+  <data name="Detail_BackToList" xml:space="preserve">
+    <value>← List</value>
+  </data>
+  <data name="Detail_Conditions" xml:space="preserve">
+    <value>Trade conditions</value>
+  </data>
+  <data name="Detail_SellerWallet" xml:space="preserve">
+    <value>Seller wallet</value>
+  </data>
+  <data name="Detail_Transport" xml:space="preserve">
+    <value>Transport mode</value>
+  </data>
+  <data name="Detail_Quantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="Detail_ShipmentDate" xml:space="preserve">
+    <value>Latest shipment date</value>
+  </data>
+  <data name="Detail_PaymentExpiry" xml:space="preserve">
+    <value>Payment expiry</value>
+  </data>
+  <data name="Detail_Documents" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="Detail_NotSubmitted" xml:space="preserve">
+    <value>Not submitted</value>
+  </data>
+  <data name="Detail_Submitted" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="Detail_DocType" xml:space="preserve">
+    <value>Document type</value>
+  </data>
+  <data name="Detail_FileLabel" xml:space="preserve">
+    <value>File (any file; demo JSON allowed)</value>
+  </data>
+  <data name="Detail_SubmitDoc" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Detail_DemoJsonHint" xml:space="preserve">
+    <value>In demo mode you can inject mismatches via JSON (e.g. {"fields":{"totalAmount":1000,"currency":"USDC"}}).</value>
+  </data>
+  <data name="Detail_MatchResult" xml:space="preserve">
+    <value>Verification result (latest)</value>
+  </data>
+  <data name="Detail_AiRisk" xml:space="preserve">
+    <value>AI risk</value>
+  </data>
+  <data name="Detail_Rule" xml:space="preserve">
+    <value>Rule</value>
+  </data>
+  <data name="Detail_Result" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="Detail_Expected" xml:space="preserve">
+    <value>Expected</value>
+  </data>
+  <data name="Detail_Actual" xml:space="preserve">
+    <value>Actual</value>
+  </data>
+  <data name="Detail_NeedsCheck" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="Detail_NG" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="Detail_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Detail_NoActions" xml:space="preserve">
+    <value>No actions available for your role and state.</value>
+  </data>
+  <data name="Detail_OnChain" xml:space="preserve">
+    <value>On-chain transactions</value>
+  </data>
+  <data name="Detail_Audit" xml:space="preserve">
+    <value>Audit trail</value>
+  </data>
+  <data name="Detail_Act_RequestApproval" xml:space="preserve">
+    <value>Request approval</value>
+  </data>
+  <data name="Detail_Act_ApproveConditions" xml:space="preserve">
+    <value>Approve conditions (lock)</value>
+  </data>
+  <data name="Detail_Act_Fund" xml:space="preserve">
+    <value>Fund escrow</value>
+  </data>
+  <data name="Detail_Act_RunAnalysis" xml:space="preserve">
+    <value>Run analysis</value>
+  </data>
+  <data name="Detail_Act_Verify" xml:space="preserve">
+    <value>Verify documents (to approval)</value>
+  </data>
+  <data name="Detail_Act_RejectToResubmit" xml:space="preserve">
+    <value>Send back (reject docs)</value>
+  </data>
+  <data name="Detail_Act_ManualReview" xml:space="preserve">
+    <value>Send to manual review</value>
+  </data>
+  <data name="Detail_Act_RejectBlocked" xml:space="preserve">
+    <value>Reject documents (resubmit)</value>
+  </data>
+  <data name="Detail_Act_ApprovePayment" xml:space="preserve">
+    <value>Approve payment</value>
+  </data>
+  <data name="Detail_Act_Settle" xml:space="preserve">
+    <value>Settle (release funds)</value>
+  </data>
+  <data name="Detail_Act_Refund" xml:space="preserve">
+    <value>Refund buyer</value>
+  </data>
+  <data name="Detail_Act_ForceExpire" xml:space="preserve">
+    <value>(Demo) force expire</value>
+  </data>
+  <data name="Detail_Act_Cancel" xml:space="preserve">
+    <value>Cancel trade</value>
+  </data>
+  <data name="Detail_Msg_Submitted" xml:space="preserve">
+    <value>{0} submitted.</value>
+  </data>
+  <data name="Detail_Msg_MissingDocs" xml:space="preserve">
+    <value>Missing required documents: {0}</value>
+  </data>
+  <data name="Detail_Reject_Verifier" xml:space="preserve">
+    <value>Sent back by verifier</value>
+  </data>
+  <data name="Detail_Reject_Mismatch" xml:space="preserve">
+    <value>Rejected due to mismatch</value>
+  </data>
+  <data name="Detail_Cancel_Reason" xml:space="preserve">
+    <value>Cancelled by user</value>
+  </data>
+  <data name="Demo_NotSeeded" xml:space="preserve">
+    <value>Demo users not seeded</value>
+  </data>
+  <data name="Master_Companies" xml:space="preserve">
+    <value>Companies</value>
+  </data>
+  <data name="Master_Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Master_NoAccess" xml:space="preserve">
+    <value>This screen is available only to the Administrator role.</value>
+  </data>
+  <data name="Master_Company_New" xml:space="preserve">
+    <value>+ Add company</value>
+  </data>
+  <data name="Master_User_New" xml:space="preserve">
+    <value>+ Add user</value>
+  </data>
+  <data name="Master_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Master_Wallet" xml:space="preserve">
+    <value>Wallet address</value>
+  </data>
+  <data name="Master_Country" xml:space="preserve">
+    <value>Country code</value>
+  </data>
+  <data name="Master_DisplayName" xml:space="preserve">
+    <value>Display name</value>
+  </data>
+  <data name="Master_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Master_Company" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="Master_NoCompany" xml:space="preserve">
+    <value>No company</value>
+  </data>
+  <data name="Master_Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="Master_Culture" xml:space="preserve">
+    <value>Preferred language</value>
+  </data>
+  <data name="Master_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Master_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Master_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Master_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Master_ConfirmDelete" xml:space="preserve">
+    <value>Delete this?</value>
+  </data>
+  <data name="Master_Created" xml:space="preserve">
+    <value>Created.</value>
+  </data>
+  <data name="Master_Updated" xml:space="preserve">
+    <value>Updated.</value>
+  </data>
+  <data name="Master_Deleted" xml:space="preserve">
+    <value>Deleted.</value>
+  </data>
+  <data name="Agent_Title" xml:space="preserve">
+    <value>AI Agent</value>
+  </data>
+  <data name="Agent_Intro" xml:space="preserve">
+    <value>Drive the trade lifecycle by chatting. Ask me to check status or perform actions.</value>
+  </data>
+  <data name="Agent_NotConfigured" xml:space="preserve">
+    <value>The agent is not configured. Set the Azure OpenAI endpoint, key and deployment to enable it.</value>
+  </data>
+  <data name="Agent_NeedUser" xml:space="preserve">
+    <value>Select a user to use the agent.</value>
+  </data>
+  <data name="Agent_Placeholder" xml:space="preserve">
+    <value>Try: "list pending trades" or "approve conditions for trade 3".</value>
+  </data>
+  <data name="Agent_Thinking" xml:space="preserve">
+    <value>Thinking...</value>
+  </data>
+  <data name="Agent_InputPlaceholder" xml:space="preserve">
+    <value>Type a message (Enter to send)</value>
+  </data>
+  <data name="Agent_Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Agent_NoReply" xml:space="preserve">
+    <value>(no reply)</value>
+  </data>
+  <data name="Agent_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+
+  <data name="Settings_Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Settings_Intro" xml:space="preserve">
+    <value>Configure your own company (the buyer / importer) and its wallet. The buyer is fixed to this company when creating a trade.</value>
+  </data>
+  <data name="Settings_NoAccess" xml:space="preserve">
+    <value>You do not have permission to change settings.</value>
+  </data>
+  <data name="Settings_OwnCompany" xml:space="preserve">
+    <value>Own company (buyer)</value>
+  </data>
+  <data name="Settings_OwnCompanyHint" xml:space="preserve">
+    <value>Select the buyer / importer company that operates this app.</value>
+  </data>
+  <data name="Settings_OwnWallet" xml:space="preserve">
+    <value>Own wallet</value>
+  </data>
+  <data name="Settings_OwnWalletHint" xml:space="preserve">
+    <value>The wallet address of your company used to fund the escrow.</value>
+  </data>
+  <data name="Settings_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Settings_Saved" xml:space="preserve">
+    <value>Settings saved.</value>
+  </data>
+  <data name="New_BuyerFixedHint" xml:space="preserve">
+    <value>The buyer is fixed to your own company set in Settings.</value>
+  </data>
+
+</root>

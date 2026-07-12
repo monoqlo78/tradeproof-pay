@@ -1,0 +1,33 @@
+﻿@using System.Globalization
+@inject IStringLocalizer<SharedResource> L
+@inject IClientLocalizationProvider ClientLocalization
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="@L["Meta_Description"]" />
+    <base href="/" />
+    <ResourcePreloader />
+    <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]" />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["HashKeyChain.styles.css"]" />
+    <ImportMap />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <HeadOutlet />
+</head>
+
+<body>
+    <Routes />
+    <ReconnectModal />
+    <script>
+        // Localized client-side strings for the current UI culture. Keys are
+        // stable English identifiers; only the values are translated.
+        window.hashKeyChainResources = @((MarkupString)ClientLocalization.GetResourcesJson());
+    </script>
+    <script src="@Assets["js/localization.js"]"></script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>

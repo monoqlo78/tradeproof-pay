@@ -1,0 +1,402 @@
+@page "/trades/{TradeId:int}"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using HashKeyChain.Data
+@using HashKeyChain.Domain
+@using HashKeyChain.Localization
+@using HashKeyChain.Services.Documents
+@using HashKeyChain.Services.Security
+@using HashKeyChain.Services.Settlement
+@using HashKeyChain.Services.Trades
+@using HashKeyChain.Services.Verification
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject ITradeService TradeService
+@inject IEscrowService EscrowService
+@inject IDocumentService DocumentService
+@inject IVerificationService VerificationService
+@inject ISettlementService SettlementService
+@inject IRefundService RefundService
+@inject IEnumLocalizer EnumL
+@inject ICurrentUserContext CurrentUser
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["Detail_PageTitle"] — TradeProof Pay</PageTitle>
+
+@if (_trade is null)
+{
+    <p>@L["Common_Loading"]</p>
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h1 class="h3 mb-1"><code>@_trade.TradeReference</code></h1>
+            <span class="badge @StatusClass(_trade.Status) fs-6">@EnumL.Localize(_trade.Status)</span>
+            @if (_trade.LatestVerdict is { } v)
+            {
+                <span class="badge bg-light text-dark border fs-6">@L["Common_Verdict"]: @EnumL.Localize(v)</span>
+            }
+            @if (_trade.ConditionsLocked)
+            {
+                <span class="badge bg-secondary">@L["Detail_ConditionsLocked"]</span>
+            }
+        </div>
+        <a class="btn btn-outline-secondary btn-sm" href="/trades">@L["Detail_BackToList"]</a>
+    </div>
+
+    @if (_error is not null)
+    {
+        <div class="alert alert-danger">@_error</div>
+    }
+    @if (_info is not null)
+    {
+        <div class="alert alert-success">@_info</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card mb-3">
+                <div class="card-header fw-bold">@L["Detail_Conditions"]</div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">@L["Common_BuyerSeller"]</dt>
+                        <dd class="col-sm-8">@(_trade.BuyerCompany?.Name) → @(_trade.SellerCompany?.Name)</dd>
+                        <dt class="col-sm-4">@L["Common_Amount"]</dt>
+                        <dd class="col-sm-8">@_trade.PaymentAmount.ToString("N2") @_trade.Currency (@_trade.PaymentToken)</dd>
+                        <dt class="col-sm-4">@L["Detail_SellerWallet"]</dt>
+                        <dd class="col-sm-8 font-monospace small">@_trade.SellerWalletAddress</dd>
+                        <dt class="col-sm-4">@L["Detail_Transport"]</dt>
+                        <dd class="col-sm-8">@EnumL.Localize(_trade.TransportMode)</dd>
+                        @if (_trade.ExpectedQuantity is { } q)
+                        {
+                            <dt class="col-sm-4">@L["Detail_Quantity"]</dt>
+                            <dd class="col-sm-8">@q</dd>
+                        }
+                        @if (_trade.LatestShipmentDate is { } lsd)
+                        {
+                            <dt class="col-sm-4">@L["Detail_ShipmentDate"]</dt>
+                            <dd class="col-sm-8">@lsd.ToString("yyyy-MM-dd")</dd>
+                        }
+                        @if (_trade.PaymentExpiry is { } pe)
+                        {
+                            <dt class="col-sm-4">@L["Detail_PaymentExpiry"]</dt>
+                            <dd class="col-sm-8">@pe.ToString("yyyy-MM-dd")</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header fw-bold">@L["Detail_Documents"]</div>
+                <div class="card-body">
+                    <ul class="list-group mb-3">
+                        @foreach (var rt in _requiredTypes)
+                        {
+                            var slot = _trade.Documents.FirstOrDefault(d => d.DocumentType == rt);
+                            var current = slot?.Versions.Where(x => x.IsCurrent).OrderByDescending(x => x.Version).FirstOrDefault();
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    @EnumL.Localize(rt)
+                                    @if (current is not null)
+                                    {
+                                        <span class="text-muted small">v@(current.Version) · sha256 @current.Sha256.Substring(0, 10)…</span>
+                                    }
+                                </span>
+                                @if (current is null)
+                                {
+                                    <span class="badge bg-light text-dark border">@L["Detail_NotSubmitted"]</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@L["Detail_Submitted"]</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+
+                    @if (CanUpload)
+                    {
+                        <div class="border rounded p-3 bg-light">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label small mb-1">@L["Detail_DocType"]</label>
+                                    <select class="form-select form-select-sm" @bind="_uploadType">
+                                        @foreach (var dt in _requiredTypes)
+                                        {
+                                            <option value="@dt">@EnumL.Localize(dt)</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label small mb-1">@L["Detail_FileLabel"]</label>
+                                    <InputFile class="form-control form-control-sm" OnChange="OnFileSelected" />
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-sm btn-primary w-100" @onclick="UploadAsync" disabled="@(_selectedFile is null || _busy)">@L["Detail_SubmitDoc"]</button>
+                                </div>
+                            </div>
+                            <div class="form-text">@L["Detail_DemoJsonHint"]</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (_runs.Count > 0)
+            {
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">@L["Detail_MatchResult"]</div>
+                    <div class="card-body">
+                        @{ var run = _runs.First(); }
+                        <p class="mb-2">
+                            <span class="badge @VerdictClass(run.Result)">@EnumL.Localize(run.Result)</span>
+                            @if (run.AiRiskLevel is not null)
+                            {
+                                <span class="badge bg-light text-dark border">@L["Detail_AiRisk"]: @run.AiRiskLevel</span>
+                            }
+                            <span class="text-muted small">@run.Summary</span>
+                        </p>
+                        <table class="table table-sm">
+                            <thead><tr><th>@L["Detail_Rule"]</th><th>@L["Detail_Result"]</th><th>@L["Detail_Expected"]</th><th>@L["Detail_Actual"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var c in run.Checks.OrderBy(c => c.Passed))
+                                {
+                                    <tr class="@(c.Passed ? "" : (c.IsSoft ? "table-warning" : "table-danger"))">
+                                        <td class="small">@c.RuleKey</td>
+                                        <td>@(c.Passed ? "OK" : (c.IsSoft ? L["Detail_NeedsCheck"].Value : L["Detail_NG"].Value))</td>
+                                        <td class="small">@c.ExpectedValue</td>
+                                        <td class="small">@c.ActualValue</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card mb-3">
+                <div class="card-header fw-bold">@L["Detail_Actions"]</div>
+                <div class="card-body d-grid gap-2">
+                    @foreach (var action in AvailableActions())
+                    {
+                        <button class="btn @action.Css" @onclick="action.Invoke" disabled="@_busy">@action.Label</button>
+                    }
+                    @if (AvailableActions().Count == 0)
+                    {
+                        <span class="text-muted small">@L["Detail_NoActions"]</span>
+                    }
+                </div>
+            </div>
+
+            @if (_chainTx.Count > 0)
+            {
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">@L["Detail_OnChain"]</div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var tx in _chainTx)
+                        {
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <strong>@tx.Operation</strong>
+                                    <span class="badge @(tx.Status == "Success" ? "bg-success" : "bg-secondary")">@tx.Status</span>
+                                </div>
+                                <div class="font-monospace text-truncate small">@tx.TransactionHash</div>
+                                @if (tx.ExplorerUrl is not null)
+                                {
+                                    <a href="@tx.ExplorerUrl" target="_blank" class="small">Explorer ↗</a>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <div class="card">
+                <div class="card-header fw-bold">@L["Detail_Audit"]</div>
+                <ul class="list-group list-group-flush" style="max-height: 24rem; overflow:auto;">
+                    @foreach (var a in _audit)
+                    {
+                        <li class="list-group-item py-2">
+                            <div class="d-flex justify-content-between">
+                                <strong class="small">@a.Action</strong>
+                                <span class="text-muted small">@a.TimestampUtc.ToLocalTime().ToString("MM/dd HH:mm:ss")</span>
+                            </div>
+                            <div class="small text-muted">@a.Actor</div>
+                            @if (a.Comment is not null)
+                            {
+                                <div class="small">@a.Comment</div>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int TradeId { get; set; }
+
+    private Trade? _trade;
+    private List<VerificationRun> _runs = new();
+    private List<ChainTransaction> _chainTx = new();
+    private List<AuditEntry> _audit = new();
+    private IReadOnlyList<DocumentType> _requiredTypes = Array.Empty<DocumentType>();
+
+    private DocumentType _uploadType = DocumentType.CommercialInvoice;
+    private IBrowserFile? _selectedFile;
+    private string? _error;
+    private string? _info;
+    private bool _busy;
+
+    private string Actor => CurrentUser.User?.Email ?? "demo";
+
+    protected override async Task OnParametersSetAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        _trade = await db.Trades
+            .Include(t => t.BuyerCompany)
+            .Include(t => t.SellerCompany)
+            .Include(t => t.Documents).ThenInclude(d => d.Versions)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.Id == TradeId);
+
+        if (_trade is null)
+            return;
+
+        _requiredTypes = RequiredDocuments.For(_trade.TransportMode);
+        _uploadType = _requiredTypes[0];
+        _runs = await db.VerificationRuns.Include(r => r.Checks)
+            .Where(r => r.TradeId == TradeId).OrderByDescending(r => r.RunAtUtc).AsNoTracking().ToListAsync();
+        _chainTx = await db.ChainTransactions.Where(c => c.TradeId == TradeId)
+            .OrderByDescending(c => c.TimestampUtc).AsNoTracking().ToListAsync();
+        _audit = await db.AuditEntries.Where(a => a.TradeId == TradeId)
+            .OrderByDescending(a => a.TimestampUtc).AsNoTracking().ToListAsync();
+    }
+
+    private bool CanUpload =>
+        _trade is not null
+        && CurrentUser.Can(TradeOperation.SubmitDocument)
+        && _trade.Status is TradeStatus.AwaitingDocuments or TradeStatus.DocumentsRejected;
+
+    private void OnFileSelected(InputFileChangeEventArgs e) => _selectedFile = e.File;
+
+    private async Task UploadAsync()
+    {
+        if (_selectedFile is null)
+            return;
+        await Run(async () =>
+        {
+            await using var stream = _selectedFile.OpenReadStream(maxAllowedSize: 8 * 1024 * 1024);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            await DocumentService.UploadAsync(TradeId, _uploadType, _selectedFile.Name, ms.ToArray(), Actor);
+            _selectedFile = null;
+            _info = L["Detail_Msg_Submitted", EnumL.Localize(_uploadType)];
+        });
+    }
+
+    private sealed record ActionButton(string Label, string Css, Func<Task> Invoke);
+
+    private List<ActionButton> AvailableActions()
+    {
+        var list = new List<ActionButton>();
+        if (_trade is null)
+            return list;
+        var s = _trade.Status;
+
+        if (s == TradeStatus.Draft && CurrentUser.Can(TradeOperation.RequestApproval))
+            list.Add(new(L["Detail_Act_RequestApproval"], "btn-primary", () => Run(() => TradeService.RequestApprovalAsync(TradeId, Actor))));
+
+        if (s == TradeStatus.PendingTradeApproval && CurrentUser.Can(TradeOperation.ApproveConditions))
+            list.Add(new(L["Detail_Act_ApproveConditions"], "btn-success", () => Run(() => TradeService.ApproveConditionsAsync(TradeId, Actor))));
+
+        if (s == TradeStatus.AwaitingFunding && CurrentUser.Can(TradeOperation.FundEscrow))
+            list.Add(new(L["Detail_Act_Fund"], "btn-success", () => Run(() => EscrowService.FundAsync(TradeId, Actor))));
+
+        if (s == TradeStatus.AwaitingDocuments && CurrentUser.Can(TradeOperation.RunAnalysis))
+            list.Add(new(L["Detail_Act_RunAnalysis"], "btn-primary", () => Run(async () =>
+            {
+                var missing = await DocumentService.MissingRequiredAsync(TradeId);
+                if (missing.Count > 0)
+                    throw new TradeOperationException(L["Detail_Msg_MissingDocs", string.Join(", ", missing.Select(m => EnumL.Localize(m)))]);
+                await VerificationService.RunAnalysisAsync(TradeId, Actor);
+            })));
+
+        if (s is TradeStatus.ReadyForVerification or TradeStatus.ManualReview && CurrentUser.Can(TradeOperation.VerifyDocuments))
+        {
+            list.Add(new(L["Detail_Act_Verify"], "btn-success", () => Run(() => VerificationService.ConfirmAsync(TradeId, Actor))));
+            list.Add(new(L["Detail_Act_RejectToResubmit"], "btn-outline-danger", () => Run(() => VerificationService.RejectAsync(TradeId, Actor, L["Detail_Reject_Verifier"]))));
+        }
+
+        if (s is TradeStatus.ReadyForVerification or TradeStatus.Blocked && CurrentUser.Can(TradeOperation.RaiseManualReview))
+            list.Add(new(L["Detail_Act_ManualReview"], "btn-outline-warning", () => Run(() => VerificationService.RaiseManualReviewAsync(TradeId, Actor))));
+
+        if (s == TradeStatus.Blocked && CurrentUser.Can(TradeOperation.RejectDocuments))
+            list.Add(new(L["Detail_Act_RejectBlocked"], "btn-outline-danger", () => Run(() => VerificationService.RejectAsync(TradeId, Actor, L["Detail_Reject_Mismatch"]))));
+
+        if (s == TradeStatus.ReadyForApproval && CurrentUser.Can(TradeOperation.ApprovePayment))
+            list.Add(new(L["Detail_Act_ApprovePayment"], "btn-success", () => Run(() => SettlementService.ApprovePaymentAsync(TradeId, Actor))));
+
+        if (s == TradeStatus.Approved && CurrentUser.Can(TradeOperation.SignTransaction))
+            list.Add(new(L["Detail_Act_Settle"], "btn-success", () => Run(() => SettlementService.SettleAsync(TradeId, Actor))));
+
+        if (s is TradeStatus.Expired or TradeStatus.RefundPending && CurrentUser.Can(TradeOperation.Refund))
+            list.Add(new(L["Detail_Act_Refund"], "btn-warning", () => Run(() => RefundService.RefundAsync(TradeId, Actor))));
+
+        // Demo helper: force-expire a funded, pre-settlement trade.
+        if (_trade.IsFunded && !_trade.IsSettled && !_trade.IsRefunded
+            && s is not (TradeStatus.Expired or TradeStatus.RefundPending or TradeStatus.Refunded)
+            && CurrentUser.Can(TradeOperation.Refund))
+            list.Add(new(L["Detail_Act_ForceExpire"], "btn-outline-dark", () => Run(() => RefundService.MarkExpiredAsync(TradeId, Actor, force: true))));
+
+        if (s is TradeStatus.Draft or TradeStatus.PendingTradeApproval or TradeStatus.AwaitingFunding
+            && CurrentUser.Can(TradeOperation.CancelTrade))
+            list.Add(new(L["Detail_Act_Cancel"], "btn-outline-secondary", () => Run(() => TradeService.CancelAsync(TradeId, Actor, L["Detail_Cancel_Reason"]))));
+
+        return list;
+    }
+
+    private async Task Run(Func<Task> op)
+    {
+        _error = null;
+        _info = null;
+        _busy = true;
+        try
+        {
+            await op();
+            await LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static string StatusClass(TradeStatus status) => status switch
+    {
+        TradeStatus.Settled => "bg-success",
+        TradeStatus.Refunded => "bg-secondary",
+        TradeStatus.Blocked or TradeStatus.DocumentsRejected => "bg-danger",
+        TradeStatus.ManualReview => "bg-warning text-dark",
+        TradeStatus.Cancelled or TradeStatus.Expired => "bg-dark",
+        TradeStatus.Draft => "bg-light text-dark border",
+        _ => "bg-info text-dark"
+    };
+
+    private static string VerdictClass(VerificationResult r) => r switch
+    {
+        VerificationResult.Pass or VerificationResult.ReadyForApproval => "bg-success",
+        VerificationResult.ManualReview => "bg-warning text-dark",
+        VerificationResult.Blocked => "bg-danger",
+        _ => "bg-secondary"
+    };
+}

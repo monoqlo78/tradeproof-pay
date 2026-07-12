@@ -1,0 +1,31 @@
+.language-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border: 1px solid #d0d0d0;
+    border-radius: 999px;
+    padding: 0.15rem;
+    background: #fff;
+}
+
+.language-selector .lang-link {
+    display: inline-block;
+    padding: 0.15rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-decoration: none;
+    color: #444;
+    white-space: nowrap;
+}
+
+.language-selector .lang-link:hover {
+    background: #f0f0f0;
+    color: #000;
+}
+
+.language-selector .lang-link.active {
+    background: #1b6ec2;
+    color: #fff;
+    font-weight: 600;
+}

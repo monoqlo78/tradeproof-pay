@@ -1,0 +1,28 @@
+{
+  "network": "hashkeyTestnet",
+  "chainId": 133,
+  "rpcUrl": "https://testnet.hsk.xyz",
+  "explorerBaseUrl": "https://testnet-explorer.hsk.xyz",
+  "deployedAt": "2026-07-12",
+  "owner": "0x7984A9184B985C27c1864ca75d4f6fb32aBac523",
+  "contracts": {
+    "TradeEscrow": {
+      "address": "0x32cFF91E852ab80aD29fCE1AA63B7B40342B44c1",
+      "explorer": "https://testnet-explorer.hsk.xyz/address/0x32cFF91E852ab80aD29fCE1AA63B7B40342B44c1"
+    },
+    "MockUSDC": {
+      "address": "0xFff35Fd2A98252F3dD5ad76D4b3e425993C6153c",
+      "decimals": 6,
+      "note": "Test-only token, no monetary value. Testnet/local only.",
+      "explorer": "https://testnet-explorer.hsk.xyz/address/0xFff35Fd2A98252F3dD5ad76D4b3e425993C6153c"
+    }
+  },
+  "appsettingsBlockchain": {
+    "Environment": "Testnet",
+    "RpcUrl": "https://testnet.hsk.xyz",
+    "ChainId": 133,
+    "ExplorerBaseUrl": "https://testnet-explorer.hsk.xyz",
+    "EscrowContractAddress": "0x32cFF91E852ab80aD29fCE1AA63B7B40342B44c1",
+    "TokenContractAddress": "0xFff35Fd2A98252F3dD5ad76D4b3e425993C6153c"
+  }
+}

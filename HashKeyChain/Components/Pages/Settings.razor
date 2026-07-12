@@ -1,0 +1,117 @@
+@page "/settings"
+@rendermode InteractiveServer
+@using HashKeyChain.Configuration
+@using HashKeyChain.Data
+@using HashKeyChain.Domain
+@using HashKeyChain.Services.Security
+@using HashKeyChain.Services.Settings
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject IOrgSettingsService OrgSettings
+@inject ICurrentUserContext CurrentUser
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["Settings_Title"] — TradeProof Pay</PageTitle>
+
+@if (!CurrentUser.Can(TradeOperation.ManageDemoData))
+{
+    <div class="alert alert-warning">@L["Settings_NoAccess"]</div>
+}
+else
+{
+    <h1 class="h3 mb-1">@L["Settings_Title"]</h1>
+    <p class="text-muted">@L["Settings_Intro"]</p>
+
+    @if (_info is not null)
+    {
+        <div class="alert alert-success">@_info</div>
+    }
+    @if (_error is not null)
+    {
+        <div class="alert alert-danger">@_error</div>
+    }
+
+    @if (_companies is null)
+    {
+        <p>@L["Common_Loading"]</p>
+    }
+    else if (_companies.Count == 0)
+    {
+        <div class="alert alert-info">@L["New_NeedCompanies"]</div>
+    }
+    else
+    {
+        <div class="card" style="max-width: 40rem;">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">@L["Settings_OwnCompany"]</label>
+                    <select class="form-select" @bind="_ownCompanyId" @bind:after="OnCompanyChanged">
+                        @foreach (var c in _companies)
+                        {
+                            <option value="@c.Id">@c.Name (@c.CountryCode)</option>
+                        }
+                    </select>
+                    <div class="form-text">@L["Settings_OwnCompanyHint"]</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">@L["Settings_OwnWallet"]</label>
+                    <input class="form-control font-monospace" @bind="_ownWallet" placeholder="0x..." />
+                    <div class="form-text">@L["Settings_OwnWalletHint"]</div>
+                </div>
+                <button class="btn btn-primary" @onclick="SaveAsync" disabled="@_busy">@L["Settings_Save"]</button>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private List<Company>? _companies;
+    private int _ownCompanyId;
+    private string? _ownWallet;
+    private string? _info;
+    private string? _error;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        _companies = await db.Companies.OrderBy(c => c.Name).AsNoTracking().ToListAsync();
+
+        var settings = OrgSettings.Current;
+        var own = OrgSettingsResolver.ResolveOwnCompany(settings, _companies);
+        _ownCompanyId = own?.Id ?? 0;
+        _ownWallet = OrgSettingsResolver.ResolveOwnWallet(settings, own);
+    }
+
+    private void OnCompanyChanged()
+    {
+        // Prefill the wallet from the selected company when the field is empty.
+        var c = _companies?.FirstOrDefault(x => x.Id == _ownCompanyId);
+        if (c?.WalletAddress is { } w && string.IsNullOrWhiteSpace(_ownWallet))
+            _ownWallet = w;
+    }
+
+    private async Task SaveAsync()
+    {
+        _info = null;
+        _error = null;
+        _busy = true;
+        try
+        {
+            await OrgSettings.SaveAsync(new OrgSettings
+            {
+                OwnCompanyId = _ownCompanyId == 0 ? null : _ownCompanyId,
+                OwnWalletAddress = string.IsNullOrWhiteSpace(_ownWallet) ? null : _ownWallet!.Trim()
+            });
+            _info = L["Settings_Saved"];
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

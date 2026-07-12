@@ -1,0 +1,216 @@
+@page "/"
+@rendermode InteractiveServer
+@using HashKeyChain.Data
+@using HashKeyChain.Domain
+@using HashKeyChain.Services.Security
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject IEnumLocalizer EnumL
+@inject ICurrentUserContext CurrentUser
+@inject NavigationManager Nav
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["Dash_Title"] — TradeProof Pay</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-1">
+    <h1 class="h3 mb-0">@L["Dash_Title"]</h1>
+    @if (CurrentUser.Can(TradeOperation.CreateTrade))
+    {
+        <a class="btn btn-primary" href="/trades/new">@L["Common_NewTrade"]</a>
+    }
+</div>
+<p class="text-muted">@L["Dash_Subtitle"]</p>
+
+@if (_trades is null)
+{
+    <p>@L["Common_Loading"]</p>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3 col-xl">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">@L["Dash_Total"]</div>
+                    <div class="display-6 fw-bold">@_trades.Count</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">@L["Dash_Active"]</div>
+                    <div class="display-6 fw-bold text-info">@_active</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl">
+            <div class="card h-100 border-0 shadow-sm @(_attention > 0 ? "border-start border-4 border-warning" : "")">
+                <div class="card-body">
+                    <div class="text-muted small">@L["Dash_Attention"]</div>
+                    <div class="display-6 fw-bold @(_attention > 0 ? "text-warning" : "")">@_attention</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">@L["Dash_Settled"]</div>
+                    <div class="display-6 fw-bold text-success">@_settled</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-muted small">@L["Dash_Refunded"]</div>
+                    <div class="display-6 fw-bold text-secondary">@_refunded</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">@L["Dash_Recent"]</span>
+                    <a class="small" href="/trades">@L["Dash_ShowAll"]</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (_trades.Count == 0)
+                    {
+                        <div class="alert alert-info m-3">@L["Common_NoTrades"]</div>
+                    }
+                    else
+                    {
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3">@L["Common_Ref"]</th>
+                                    <th>@L["Common_BuyerSeller"]</th>
+                                    <th class="text-end">@L["Common_Amount"]</th>
+                                    <th>@L["Common_Status"]</th>
+                                    <th class="pe-3">@L["Common_Updated"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var t in _recent)
+                                {
+                                    <tr style="cursor:pointer" @onclick="() => Open(t.Id)">
+                                        <td class="ps-3"><code>@t.TradeReference</code></td>
+                                        <td>
+                                            <div>@(t.BuyerCompany?.Name ?? "-")</div>
+                                            <div class="text-muted small">→ @(t.SellerCompany?.Name ?? "-")</div>
+                                        </td>
+                                        <td class="text-end">@t.PaymentAmount.ToString("N2") @t.Currency</td>
+                                        <td><span class="badge @StatusClass(t.Status)">@EnumL.Localize(t.Status)</span></td>
+                                        <td class="pe-3 text-muted small">@t.UpdatedAtUtc.ToLocalTime().ToString("MM/dd HH:mm")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-header bg-white fw-semibold">@L["Dash_InEscrow"]</div>
+                <div class="card-body">
+                    @if (_inEscrow.Count == 0)
+                    {
+                        <div class="text-muted">@L["Dash_NoEscrow"]</div>
+                    }
+                    else
+                    {
+                        @foreach (var kv in _inEscrow)
+                        {
+                            <div class="d-flex justify-content-between border-bottom py-1">
+                                <span class="fw-semibold">@kv.Key</span>
+                                <span>@kv.Value.ToString("N2")</span>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white fw-semibold">@L["Dash_StatusBreakdown"]</div>
+                <div class="card-body">
+                    @if (_statusCounts.Count == 0)
+                    {
+                        <div class="text-muted">@L["Dash_NoData"]</div>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var group in _statusCounts.OrderByDescending(g => g.Value))
+                            {
+                                <span class="badge @StatusClass(group.Key)">@EnumL.Localize(group.Key): @group.Value</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private static readonly TradeStatus[] TerminalStates =
+        { TradeStatus.Settled, TradeStatus.Expired, TradeStatus.Refunded, TradeStatus.Cancelled };
+
+    private static readonly TradeStatus[] AttentionStates =
+        { TradeStatus.ManualReview, TradeStatus.Blocked, TradeStatus.DocumentsRejected };
+
+    private static readonly TradeStatus[] InEscrowStates =
+    {
+        TradeStatus.Funded, TradeStatus.AwaitingDocuments, TradeStatus.Analyzing,
+        TradeStatus.ManualReview, TradeStatus.DocumentsRejected, TradeStatus.Blocked,
+        TradeStatus.ReadyForVerification, TradeStatus.ReadyForApproval, TradeStatus.Approved,
+        TradeStatus.SettlementPending, TradeStatus.RefundPending
+    };
+
+    private List<Trade>? _trades;
+    private List<Trade> _recent = new();
+    private Dictionary<TradeStatus, int> _statusCounts = new();
+    private Dictionary<string, decimal> _inEscrow = new();
+    private int _active, _attention, _settled, _refunded;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        _trades = await db.Trades
+            .Include(t => t.BuyerCompany)
+            .Include(t => t.SellerCompany)
+            .OrderByDescending(t => t.UpdatedAtUtc)
+            .AsNoTracking()
+            .ToListAsync();
+
+        _recent = _trades.Take(5).ToList();
+        _statusCounts = _trades.GroupBy(t => t.Status).ToDictionary(g => g.Key, g => g.Count());
+        _active = _trades.Count(t => !TerminalStates.Contains(t.Status));
+        _attention = _trades.Count(t => AttentionStates.Contains(t.Status));
+        _settled = _trades.Count(t => t.Status == TradeStatus.Settled);
+        _refunded = _trades.Count(t => t.Status == TradeStatus.Refunded);
+        _inEscrow = _trades
+            .Where(t => InEscrowStates.Contains(t.Status))
+            .GroupBy(t => t.Currency)
+            .ToDictionary(g => g.Key, g => g.Sum(t => t.PaymentAmount));
+    }
+
+    private void Open(int id) => Nav.NavigateTo($"/trades/{id}");
+
+    private static string StatusClass(TradeStatus status) => status switch
+    {
+        TradeStatus.Settled => "bg-success",
+        TradeStatus.Refunded => "bg-secondary",
+        TradeStatus.Blocked or TradeStatus.DocumentsRejected => "bg-danger",
+        TradeStatus.ManualReview => "bg-warning text-dark",
+        TradeStatus.Cancelled or TradeStatus.Expired => "bg-dark",
+        TradeStatus.Draft => "bg-light text-dark border",
+        _ => "bg-info text-dark"
+    };
+}

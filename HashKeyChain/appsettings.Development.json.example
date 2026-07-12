@@ -1,0 +1,20 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore.Database.Command": "Warning"
+    }
+  },
+  "Database": {
+    "Provider": "SqlServer",
+    "ConnectionString": "Server=tcp:<your-server>.database.windows.net,1433;Database=<your-db>;Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connect Timeout=30;",
+    "ApplyBootstrap": false
+  },
+  "Agent": {
+    "Enabled": true
+  },
+  "DocumentIntelligence": {
+    "Enabled": true
+  }
+}

@@ -1,0 +1,172 @@
+@page "/trades/new"
+@rendermode InteractiveServer
+@using HashKeyChain.Data
+@using HashKeyChain.Domain
+@using HashKeyChain.Localization
+@using HashKeyChain.Services.Security
+@using HashKeyChain.Services.Settings
+@using HashKeyChain.Services.Trades
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject ITradeService TradeService
+@inject IOrgSettingsService OrgSettings
+@inject IEnumLocalizer EnumL
+@inject ICurrentUserContext CurrentUser
+@inject NavigationManager Nav
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["New_Title"] — TradeProof Pay</PageTitle>
+
+<h1 class="h3 mb-3">@L["New_Title"]</h1>
+
+@if (!CurrentUser.Can(TradeOperation.CreateTrade))
+{
+    <div class="alert alert-warning">@L["New_NoPermission"]</div>
+}
+else if (_ownCompany is null || _sellerCompanies.Count == 0)
+{
+    <div class="alert alert-info">@L["New_NeedCompanies"]</div>
+}
+else
+{
+    <EditForm Model="_model" OnValidSubmit="Submit" style="max-width: 40rem;">
+        <DataAnnotationsValidator />
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">@L["New_BuyerCompany"]</label>
+                <input class="form-control" value="@_ownCompanyName" readonly disabled />
+                <div class="form-text">@L["New_BuyerFixedHint"]</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@L["New_SellerCompany"]</label>
+                <InputSelect class="form-select" @bind-Value="_model.SellerCompanyId" @bind-Value:after="OnSellerChanged">
+                    <option value="0">@L["New_Select"]</option>
+                    @foreach (var c in _sellerCompanies)
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">@L["New_BuyerWallet"]</label>
+                <InputText class="form-control font-monospace" @bind-Value="_model.BuyerWalletAddress" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@L["New_SellerWallet"]</label>
+                <InputText class="form-control font-monospace" @bind-Value="_model.SellerWalletAddress" />
+                <div class="form-text">@L["New_SellerWalletHint"]</div>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">@L["New_Transport"]</label>
+                <InputSelect class="form-select" @bind-Value="_model.TransportMode">
+                    @foreach (var m in Enum.GetValues<TransportMode>())
+                    {
+                        <option value="@m">@EnumL.Localize(m)</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">@L["Common_Amount"]</label>
+                <InputNumber class="form-control" @bind-Value="_model.PaymentAmount" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">@L["New_Currency"]</label>
+                <InputText class="form-control" @bind-Value="_model.Currency" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">@L["New_Quantity"]</label>
+                <InputNumber class="form-control" @bind-Value="_model.ExpectedQuantity" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@L["New_PO"]</label>
+                <InputText class="form-control" @bind-Value="_model.PurchaseOrderNumber" />
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">@L["New_ProductDesc"]</label>
+                <InputText class="form-control" @bind-Value="_model.ExpectedProductDescription" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">@L["New_ShipmentDate"]</label>
+                <InputDate class="form-control" @bind-Value="_model.LatestShipmentDate" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@L["New_PaymentExpiry"]</label>
+                <InputDate class="form-control" @bind-Value="_model.PaymentExpiry" />
+            </div>
+        </div>
+
+        @if (_error is not null)
+        {
+            <div class="alert alert-danger mt-3">@_error</div>
+        }
+
+        <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-primary" type="submit" disabled="@_busy">@L["New_Submit"]</button>
+            <a class="btn btn-outline-secondary" href="/trades">@L["New_Cancel"]</a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    private List<Company> _companies = new();
+    private List<Company> _sellerCompanies = new();
+    private Company? _ownCompany;
+    private string _ownCompanyName = string.Empty;
+    private readonly TradeConditionsInput _model = new()
+    {
+        TransportMode = TransportMode.Sea,
+        Currency = "USDC",
+        PaymentToken = "MockUSDC"
+    };
+    private string? _error;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        _companies = await db.Companies.OrderBy(c => c.Name).AsNoTracking().ToListAsync();
+
+        // The buyer is fixed to the operating ("own") company configured in Settings;
+        // only the counterparty (seller) is chosen per trade.
+        var settings = OrgSettings.Current;
+        _ownCompany = OrgSettingsResolver.ResolveOwnCompany(settings, _companies);
+        _ownCompanyName = _ownCompany?.Name ?? string.Empty;
+        _sellerCompanies = _companies.Where(c => c.Id != _ownCompany?.Id).ToList();
+
+        if (_ownCompany is not null)
+        {
+            _model.BuyerCompanyId = _ownCompany.Id;
+            _model.BuyerWalletAddress = OrgSettingsResolver.ResolveOwnWallet(settings, _ownCompany) ?? string.Empty;
+        }
+    }
+
+    private void OnSellerChanged()
+    {
+        var c = _companies.FirstOrDefault(x => x.Id == _model.SellerCompanyId);
+        if (c?.WalletAddress is { } w && string.IsNullOrWhiteSpace(_model.SellerWalletAddress))
+            _model.SellerWalletAddress = w;
+    }
+
+    private async Task Submit()
+    {
+        _error = null;
+        _busy = true;
+        try
+        {
+            var actor = CurrentUser.User?.Email ?? "demo";
+            var trade = await TradeService.CreateDraftAsync(_model, actor);
+            Nav.NavigateTo($"/trades/{trade.Id}");
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+            _busy = false;
+        }
+    }
+}

@@ -1,0 +1,100 @@
+@page "/trades"
+@rendermode InteractiveServer
+@using HashKeyChain.Data
+@using HashKeyChain.Domain
+@using HashKeyChain.Services.Security
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject IEnumLocalizer EnumL
+@inject ICurrentUserContext CurrentUser
+@inject NavigationManager Nav
+@inject IStringLocalizer<SharedResource> L
+
+<PageTitle>@L["Trades_Title"] — TradeProof Pay</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">@L["Trades_Title"]</h1>
+    @if (CurrentUser.Can(TradeOperation.CreateTrade))
+    {
+        <a class="btn btn-primary" href="/trades/new">@L["Common_NewTrade"]</a>
+    }
+</div>
+
+@if (_trades is null)
+{
+    <p>@L["Common_Loading"]</p>
+}
+else if (_trades.Count == 0)
+{
+    <div class="alert alert-info">@L["Common_NoTrades"]</div>
+}
+else
+{
+    <div class="d-flex gap-3 mb-3 flex-wrap">
+        @foreach (var group in _statusCounts)
+        {
+            <span class="badge bg-light text-dark border">@EnumL.Localize(group.Key): @group.Value</span>
+        }
+    </div>
+
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>@L["Common_Ref"]</th>
+                <th>@L["Common_BuyerSeller"]</th>
+                <th class="text-end">@L["Common_Amount"]</th>
+                <th>@L["Common_Status"]</th>
+                <th>@L["Common_Verdict"]</th>
+                <th>@L["Common_Updated"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in _trades)
+            {
+                <tr style="cursor:pointer" @onclick="() => Open(t.Id)">
+                    <td><code>@t.TradeReference</code></td>
+                    <td>
+                        <div>@(t.BuyerCompany?.Name ?? "-")</div>
+                        <div class="text-muted small">→ @(t.SellerCompany?.Name ?? "-")</div>
+                    </td>
+                    <td class="text-end">@t.PaymentAmount.ToString("N2") @t.Currency</td>
+                    <td><span class="badge @StatusClass(t.Status)">@EnumL.Localize(t.Status)</span></td>
+                    <td>@(t.LatestVerdict is { } v ? EnumL.Localize(v) : "-")</td>
+                    <td class="text-muted small">@t.UpdatedAtUtc.ToLocalTime().ToString("MM/dd HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Trade>? _trades;
+    private Dictionary<TradeStatus, int> _statusCounts = new();
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        _trades = await db.Trades
+            .Include(t => t.BuyerCompany)
+            .Include(t => t.SellerCompany)
+            .OrderByDescending(t => t.UpdatedAtUtc)
+            .AsNoTracking()
+            .ToListAsync();
+        _statusCounts = _trades.GroupBy(t => t.Status).ToDictionary(g => g.Key, g => g.Count());
+    }
+
+    private void Open(int id) => Nav.NavigateTo($"/trades/{id}");
+
+    private static string StatusClass(TradeStatus status) => status switch
+    {
+        TradeStatus.Settled => "bg-success",
+        TradeStatus.Refunded => "bg-secondary",
+        TradeStatus.Blocked or TradeStatus.DocumentsRejected => "bg-danger",
+        TradeStatus.ManualReview => "bg-warning text-dark",
+        TradeStatus.Cancelled or TradeStatus.Expired => "bg-dark",
+        TradeStatus.Draft => "bg-light text-dark border",
+        _ => "bg-info text-dark"
+    };
+}
